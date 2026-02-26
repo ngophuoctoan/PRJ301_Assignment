@@ -30,7 +30,7 @@ public class DBContext {
     private static String getDbURL() {
         String host = Env.get("DB_HOST", "localhost");
         String port = Env.get("DB_PORT", "1433");
-        String dbName = Env.get("DB_NAME", "BenhVien");
+        String dbName = Env.get("DB_NAME", "PRJ301_ASSIGNMENT_DENTAL_CLINIC");
         boolean encrypt = "true".equalsIgnoreCase(Env.get("DB_ENCRYPT", "false"));
         boolean trustCert = "true".equalsIgnoreCase(Env.get("DB_TRUST_SERVER_CERTIFICATE", "true"));
         return "jdbc:sqlserver://" + host + ":" + port + ";databaseName=" + dbName

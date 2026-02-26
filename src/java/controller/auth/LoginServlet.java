@@ -50,7 +50,6 @@ public class LoginServlet extends HttpServlet {
      * Tóm lại: Nếu email Google chưa có trong database, hãy tự động tạo tài khoản
      * mới rồi đăng nhập luôn. Nếu đã có thì đăng nhập như bình thường.
      */
-
     private static String getGoogleClientId() {
         return util.Env.get("GOOGLE_CLIENT_ID");
     }
@@ -72,18 +71,18 @@ public class LoginServlet extends HttpServlet {
         System.out.println("[DEBUG] REDIRECT_URI initialized: " + REDIRECT_URI);
         System.out.println("[DEBUG] CLIENT_ID: " + getGoogleClientId());
         String secret = getGoogleClientSecret();
-        System.out.println("[DEBUG] CLIENT_SECRET (first 4 chars): " +
-                (secret != null && secret.length() >= 4 ? secret.substring(0, 4) + "****" : "****"));
+        System.out.println("[DEBUG] CLIENT_SECRET (first 4 chars): "
+                + (secret != null && secret.length() >= 4 ? secret.substring(0, 4) + "****" : "****"));
     }
 
     /**
      * Processes requests for both HTTP <code>GET</code> and <code>POST</code>
      * methods.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     protected void processRequest(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
@@ -107,10 +106,10 @@ public class LoginServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>GET</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
@@ -177,9 +176,9 @@ public class LoginServlet extends HttpServlet {
                     e.printStackTrace();
                     System.out.println("[ERROR] Lỗi khi lấy staff: " + e.getMessage());
                 }
-                request.getRequestDispatcher("/view/view/jsp/admin/staff_tongquan.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/jsp/admin/staff_tongquan.jsp").forward(request, response);
             } else if ("MANAGER".equalsIgnoreCase(role)) {
-                request.getRequestDispatcher("/view/view/jsp/admin/manager_tongquan.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/jsp/admin/manager_tongquan.jsp").forward(request, response);
             } else {
                 System.out.println("Invalid role: " + role);
                 response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp?error=invalid_role");
@@ -234,7 +233,7 @@ public class LoginServlet extends HttpServlet {
                         }
 
                         String jsonResponse = result.toString(); // chuyển chuỗi JSON thành đối tượng JSONOBJECT hợp lệ
-                                                                 // -> lấy ra user và email
+                        // -> lấy ra user và email
                         System.out.println("Google API Response: " + jsonResponse);
 
                         // Parse thông tin người dùng từ JSON
@@ -268,10 +267,10 @@ public class LoginServlet extends HttpServlet {
     /**
      * Handles the HTTP <code>POST</code> method.
      *
-     * @param request  servlet request
+     * @param request servlet request
      * @param response servlet response
      * @throws ServletException if a servlet-specific error occurs
-     * @throws IOException      if an I/O error occurs
+     * @throws IOException if an I/O error occurs
      */
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
@@ -353,9 +352,9 @@ public class LoginServlet extends HttpServlet {
                     e.printStackTrace();
                     System.out.println("[ERROR] Lỗi khi lấy staff: " + e.getMessage());
                 }
-                request.getRequestDispatcher("/view/view/jsp/admin/staff_tongquan.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/jsp/admin/staff_tongquan.jsp").forward(request, response);
             } else if ("MANAGER".equalsIgnoreCase(role)) {
-                request.getRequestDispatcher("/view/view/jsp/admin/manager_tongquan.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/jsp/admin/manager_tongquan.jsp").forward(request, response);
             } else {
                 System.out.println("Invalid role: " + role);
                 response.sendRedirect(

@@ -317,14 +317,14 @@
                 <% }%>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
                 <div style="margin-top: 20px">
-                                <a class="google-btn w-100 text-decoration-none"
-                                    href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile&redirect_uri=http://localhost:8080/TestFull/LoginGG/LoginGoogleHandler&response_type=code&client_id=560611814939-bfrj1rtiahhq41h0d6fd3lcg876ic3ve.apps.googleusercontent.com&approval_prompt=force">
-                                    <img src="https://www.google.com/favicon.ico" alt="Google">
-                                    Sign in with Google
-                                </a>
-                            </div>
+                    <a class="google-btn w-100 text-decoration-none"
+                       href="https://accounts.google.com/o/oauth2/auth?scope=email%20profile&redirect_uri=http://localhost:8080/TestFull/LoginGG/LoginGoogleHandler&response_type=code&client_id=560611814939-bfrj1rtiahhq41h0d6fd3lcg876ic3ve.apps.googleusercontent.com&approval_prompt=force">
+                        <img src="https://www.google.com/favicon.ico" alt="Google">
+                        Sign in with Google
+                    </a>
+                </div>
                 <p class="text-center mt-3">
-                    <a href="<%= request.getContextPath()%>/jsp/auth/register.jsp">Sign up</a> |  <a href="${pageContext.request.contextPath}/ResetPasswordServlet?action=forgot-password">Quên mật khẩu?</a>
+                    <a href="<%= request.getContextPath()%>/view/jsp/auth/register.jsp">Sign up</a> |  <a href="${pageContext.request.contextPath}/ResetPasswordServlet?action=forgot-password">Quên mật khẩu?</a>
                 </p>
 
                 <div class="text-center mt-3">
@@ -337,17 +337,17 @@
             </form>
 
         </div>
-                
+
         <!-- Script Bootstrap đúng đường dẫn -->
         <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
-            <!-- Ghi chú: Script kiểm tra form trước khi gửi -->
+        <!-- Ghi chú: Script kiểm tra form trước khi gửi -->
         <script>
             document.querySelector("form").addEventListener("submit", function (e) {
                 const password = document.querySelector("input[name='password_hash']").value;
                 // Ghi chú: Có thể thêm logic kiểm tra mật khẩu nếu cần
             });
-        </script>  
-    
+        </script>
+
     </body>
 
 </html>
