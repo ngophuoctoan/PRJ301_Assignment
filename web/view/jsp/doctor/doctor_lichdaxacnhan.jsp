@@ -52,51 +52,71 @@
                             <i class="fas fa-arrow-left me-1"></i>Quay lại đăng ký
                         </a>
                     </div>
-                    <div class="confirmed-table-wrap">
-                        <c:set var="lastDate" value="" />
-                        <c:forEach items="${approvedSchedules}" var="schedule">
-                            <c:set var="currDate" value="" />
-                            <c:if test="${schedule.workDate != null}">
-                                <fmt:formatDate value="${schedule.workDate}" pattern="dd/MM/yyyy" var="currDate" />
-                            </c:if>
-                            <c:if test="${currDate != lastDate}">
-                                <c:if test="${not empty lastDate}"></tbody></table></div></c:if>
-                                <c:set var="lastDate" value="${currDate}" />
-                                <div class="date-group mb-3">
-                                    <div class="date-group-header bg-light px-3 py-2 rounded-top border">
-                                        <i class="fas fa-calendar-day me-2 text-success"></i><strong>${currDate}</strong>
-                                    </div>
-                                    <table class="dashboard-table table table-hover mb-0 rounded-bottom overflow-hidden">
-                                        <thead class="table-light"><tr><th>Ca làm việc</th><th>Trạng thái</th></tr></thead>
-                                        <tbody>
-                            </c:if>
+                    <div class="confirmed-table-wrap dashboard-card p-0">
+                        <table class="dashboard-table table table-hover mb-0">
+                            <thead class="table-light">
+                                <tr>
+                                    <th style="width: 25%">Ngày làm việc</th>
+                                    <th style="width: 50%">Ca làm việc</th>
+                                    <th style="width: 25%">Trạng thái</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                                <c:set var="lastDate" value="" />
+                                <c:forEach items="${approvedSchedules}" var="schedule" varStatus="loop">
+                                    <c:set var="currDate" value="" />
+                                    <c:if test="${schedule.workDate != null}">
+                                        <fmt:formatDate value="${schedule.workDate}" pattern="dd/MM/yyyy" var="currDate" />
+                                    </c:if>
+                                    
+                                    <c:if test="${currDate != lastDate}">
+                                        <c:if test="${not empty lastDate}">
+                                                </td>
+                                                <td><span class="badge bg-success">Đã xác nhận</span></td>
+                                            </tr>
+                                        </c:if>
+                                        
                                         <tr>
                                             <td>
-                                                <c:choose>
-                                                    <c:when test="${schedule.slotId == 1}">
-                                                        <span class="badge bg-info">Sáng (8h-12h)</span>
-                                                    </c:when>
-                                                    <c:when test="${schedule.slotId == 2}">
-                                                        <span class="badge bg-warning text-dark">Chiều (13h-17h)</span>
-                                                    </c:when>
-                                                    <c:when test="${schedule.slotId == 3}">
-                                                        <span class="badge bg-primary">Cả ngày (8h-17h)</span>
-                                                    </c:when>
-                                                    <c:otherwise>
-                                                        <span class="badge bg-secondary">Khác</span>
-                                                    </c:otherwise>
-                                                </c:choose>
+                                                <i class="fas fa-calendar-day text-success me-2"></i>
+                                                <strong>${currDate}</strong>
+                                            </td>
+                                            <td>
+                                        <c:set var="lastDate" value="${currDate}" />
+                                    </c:if>
+                                    
+                                    <c:choose>
+                                        <c:when test="${schedule.slotId == 1}">
+                                            <span class="badge bg-info me-1 mb-1">Sáng (8h-12h)</span>
+                                        </c:when>
+                                        <c:when test="${schedule.slotId == 2}">
+                                            <span class="badge bg-warning text-dark me-1 mb-1">Chiều (13h-17h)</span>
+                                        </c:when>
+                                        <c:when test="${schedule.slotId == 3}">
+                                            <span class="badge bg-primary me-1 mb-1">Cả ngày (8h-17h)</span>
+                                        </c:when>
+                                        <c:otherwise>
+                                            <span class="badge bg-danger me-1 mb-1">Nghỉ phép</span>
+                                        </c:otherwise>
+                                    </c:choose>
+                                    
+                                    <c:if test="${loop.last}">
                                             </td>
                                             <td><span class="badge bg-success">Đã xác nhận</span></td>
                                         </tr>
-                        </c:forEach>
-                        <c:if test="${not empty lastDate}"></tbody></table></div></c:if>
-                        <c:if test="${empty approvedSchedules}">
-                            <div class="text-center text-muted py-5">
-                                <i class="fas fa-calendar-check" style="font-size: 28px;"></i>
-                                <p class="mt-2 mb-0">Chưa có lịch được xác nhận</p>
-                            </div>
-                        </c:if>
+                                    </c:if>
+                                </c:forEach>
+                                
+                                <c:if test="${empty approvedSchedules}">
+                                    <tr>
+                                        <td colspan="3" class="text-center py-5 text-muted">
+                                            <i class="fas fa-calendar-check d-block mb-3" style="font-size: 28px;"></i>
+                                            Chưa có lịch được xác nhận
+                                        </td>
+                                    </tr>
+                                </c:if>
+                            </tbody>
+                        </table>
                     </div>
                 </div>
             </div>

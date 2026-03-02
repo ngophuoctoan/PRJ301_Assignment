@@ -21,19 +21,19 @@ import java.util.List;
 import java.util.Map;
 import model.DoctorSchedule;
 
-
 /**
  *
  * @author tranhongphuoc
  * 
  */
-//@WebServlet(name = "DoctorRegisterScheduleServlet", urlPatterns = {"/DoctorRegisterScheduleServlet"})
+// @WebServlet(name = "DoctorRegisterScheduleServlet", urlPatterns =
+// {"/DoctorRegisterScheduleServlet"})
 
-@WebServlet(name = "DoctorRegisterScheduleServlet", urlPatterns = {"/DoctorRegisterScheduleServlet"})
+@WebServlet(name = "DoctorRegisterScheduleServlet", urlPatterns = { "/DoctorRegisterScheduleServlet" })
 public class DoctorRegisterScheduleServlet extends HttpServlet {
     private DoctorScheduleDAO scheduleDAO;
 
-      // Danh sách ca làm việc cố định
+    // Danh sách ca làm việc cố định
     private static final List<Map<String, Object>> SHIFTS = new ArrayList<>();
     static {
         Map<String, Object> caSang = new HashMap<>();
@@ -54,110 +54,138 @@ public class DoctorRegisterScheduleServlet extends HttpServlet {
     public void init() throws ServletException {
         scheduleDAO = new DoctorScheduleDAO();
     }
-    
-    @Override
-protected void doGet(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    request.setAttribute("shifts", SHIFTS);
 
-    String doctorIdParam = request.getParameter("doctor_id");
-    HttpSession session = request.getSession();
-    Long doctorId = null;
-    if (doctorIdParam != null && !doctorIdParam.isEmpty()) {
-        doctorId = Long.parseLong(doctorIdParam);
-        session.setAttribute("doctor_id", doctorId);
-    } else {
-        Object doctorIdObj = session.getAttribute("doctor_id");
-        if (doctorIdObj instanceof Integer) {
-            doctorId = ((Integer) doctorIdObj).longValue();
-        } else if (doctorIdObj instanceof Long) {
-            doctorId = (Long) doctorIdObj;
-        }
-    }
-    System.out.println("doctor_id in session: " + doctorId);
-    // ✅ LOGIC MỚI: DoctorSchedule chỉ lưu LỊCH NGHỈ, không cần tự động tạo lịch làm việc
-    // Mặc định bác sĩ làm việc tất cả ngày, chỉ nghỉ khi có bản ghi trong DoctorSchedule
-    if (doctorId != null) {
-        System.out.println("💡 Bác sĩ " + doctorId + " mặc định làm việc tất cả ngày, trừ ngày có đăng ký nghỉ");
-        // scheduleDAO.autoGenerateFullDaySchedules(doctorId); // ❌ DEPRECATED - đã xóa
-    }
-    List<DoctorSchedule> schedules = new ArrayList<>();
-    List<DoctorSchedule> approvedSchedules = new ArrayList<>();
-    List<DoctorSchedule> leavePending = new ArrayList<>();
-    List<DoctorSchedule> leaveApproved = new ArrayList<>();
-    List<DoctorSchedule> leaveRejected = new ArrayList<>();
-    if (doctorId != null) {
-        schedules = scheduleDAO.getSchedulesByDoctorId(doctorId);
-        approvedSchedules = scheduleDAO.getApprovedSchedulesByDoctorId(doctorId);
-        approvedSchedules.sort(Comparator.comparing(DoctorSchedule::getWorkDate, Comparator.nullsLast(Comparator.naturalOrder())));
-        for (DoctorSchedule s : schedules) {
-            if (s.getSlotId() == null) {
-                // Ngày nghỉ - phân loại theo trạng thái
-                String st = (s.getStatus() == null) ? "" : s.getStatus().trim().toLowerCase();
-                if (st.contains("reject") || st.equals("từ chối")) leaveRejected.add(s);
-                else if (st.contains("approv") || st.equals("đã duyệt")) leaveApproved.add(s);
-                else leavePending.add(s);
-            } else {
-                if (s.getSlotId() == 1) s.setStatus("Sáng (8h-12h)");
-                else if (s.getSlotId() == 2) s.setStatus("Chiều (13h-17h)");
-                else if (s.getSlotId() == 3) s.setStatus("Cả ngày (8h-17h)");
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.setAttribute("shifts", SHIFTS);
+
+        String doctorIdParam = request.getParameter("doctor_id");
+        HttpSession session = request.getSession();
+        Long doctorId = null;
+        if (doctorIdParam != null && !doctorIdParam.isEmpty()) {
+            doctorId = Long.parseLong(doctorIdParam);
+            session.setAttribute("doctor_id", doctorId);
+        } else {
+            Object doctorIdObj = session.getAttribute("doctor_id");
+            if (doctorIdObj instanceof Integer) {
+                doctorId = ((Integer) doctorIdObj).longValue();
+            } else if (doctorIdObj instanceof Long) {
+                doctorId = (Long) doctorIdObj;
             }
         }
-    }
-    request.setAttribute("schedules", schedules);
-    request.setAttribute("approvedSchedules", approvedSchedules);
-    request.setAttribute("leavePending", leavePending);
-    request.setAttribute("leaveApproved", leaveApproved);
-    request.setAttribute("leaveRejected", leaveRejected);
-
-    String page = request.getParameter("page");
-    if ("calendar".equals(page)) {
-        request.getRequestDispatcher("/view/jsp/doctor/doctor_lichtrongthang.jsp").forward(request, response);
-        return;
-    }
-    if ("confirmed".equals(page)) {
-        request.getRequestDispatcher("/view/jsp/doctor/doctor_lichdaxacnhan.jsp").forward(request, response);
-        return;
-    }
-    request.getRequestDispatcher("/view/jsp/doctor/doctor_dangkilich.jsp").forward(request, response);
-}
-
-     @Override
-protected void doPost(HttpServletRequest request, HttpServletResponse response)
-        throws ServletException, IOException {
-    request.setCharacterEncoding("UTF-8");
-    long doctorId = Long.parseLong(request.getParameter("doctor_id"));
-    Date workDate = Date.valueOf(request.getParameter("work_date"));
-    String requestType = request.getParameter("request_type");
-    
-    // Lấy thêm tham số mới
-    String leaveType = request.getParameter("leaveType");
-    String reason = request.getParameter("reason");
-    
-    DoctorSchedule schedule = new DoctorSchedule();
-    schedule.setDoctorId(doctorId);
-    schedule.setWorkDate(workDate);
-    
-    if ("leave".equals(requestType)) {
-        // Đăng ký nghỉ phép cho bác sĩ fulltime
-        schedule.setSlotId((Integer) null); // nghỉ phép
-        schedule.setStatus("pending");
-        System.out.println("[DEBUG] Đăng ký nghỉ phép cho doctorId=" + doctorId + ", workDate=" + workDate + ", leaveType=" + leaveType + ", reason=" + reason);
-        
-    } else {
-        // Đăng ký ca làm cho bác sĩ parttime
-        String slotIdParam = request.getParameter("slot_id");
-        if (slotIdParam != null && !slotIdParam.isEmpty()) {
-            int slotId = Integer.parseInt(slotIdParam);
-            schedule.setSlotId(slotId);
-        } else {
-            schedule.setSlotId((Integer) null);
+        System.out.println("doctor_id in session: " + doctorId);
+        // ✅ LOGIC MỚI: DoctorSchedule chỉ lưu LỊCH NGHỈ, không cần tự động tạo lịch làm
+        // việc
+        // Mặc định bác sĩ làm việc tất cả ngày, chỉ nghỉ khi có bản ghi trong
+        // DoctorSchedule
+        if (doctorId != null) {
+            System.out.println("💡 Bác sĩ " + doctorId + " mặc định làm việc tất cả ngày, trừ ngày có đăng ký nghỉ");
+            // scheduleDAO.autoGenerateFullDaySchedules(doctorId); // ❌ DEPRECATED - đã xóa
         }
-        schedule.setStatus("pending");
-        System.out.println("[DEBUG] Đăng ký ca làm cho doctorId=" + doctorId + ", workDate=" + workDate + ", slotId=" + schedule.getSlotId());
+        List<DoctorSchedule> schedules = new ArrayList<>();
+        List<DoctorSchedule> approvedSchedules = new ArrayList<>();
+        List<DoctorSchedule> leavePending = new ArrayList<>();
+        List<DoctorSchedule> leaveApproved = new ArrayList<>();
+        List<DoctorSchedule> leaveRejected = new ArrayList<>();
+        if (doctorId != null) {
+            schedules = scheduleDAO.getSchedulesByDoctorId(doctorId);
+            approvedSchedules = scheduleDAO.getApprovedSchedulesByDoctorId(doctorId);
+            approvedSchedules.sort(
+                    Comparator.comparing(DoctorSchedule::getWorkDate, Comparator.nullsLast(Comparator.naturalOrder())));
+
+            // Lọc bỏ ca Sáng (1) và Chiều (2) nếu đã có ca Cả ngày (3) trong cùng một ngày
+            // Đồng thời lọc bỏ TẤT CẢ các ca làm việc nếu đã có nghỉ phép (slotId == null)
+            Map<Date, Boolean> hasFullDayMap = new HashMap<>();
+            Map<Date, Boolean> hasLeaveMap = new HashMap<>();
+            for (DoctorSchedule s : approvedSchedules) {
+                if (s.getSlotId() != null && s.getSlotId() == 3) {
+                    hasFullDayMap.put(s.getWorkDate(), true);
+                }
+                if (s.getSlotId() == null) {
+                    hasLeaveMap.put(s.getWorkDate(), true);
+                }
+            }
+            approvedSchedules.removeIf(s -> s.getSlotId() != null && (hasLeaveMap.containsKey(s.getWorkDate()) ||
+                    ((s.getSlotId() == 1 || s.getSlotId() == 2) && hasFullDayMap.containsKey(s.getWorkDate()))));
+
+            for (DoctorSchedule s : schedules) {
+                if (s.getSlotId() == null) {
+                    // Ngày nghỉ - phân loại theo trạng thái
+                    String st = (s.getStatus() == null) ? "" : s.getStatus().trim().toLowerCase();
+                    if (st.contains("reject") || st.equals("từ chối"))
+                        leaveRejected.add(s);
+                    else if (st.contains("approv") || st.equals("đã duyệt"))
+                        leaveApproved.add(s);
+                    else
+                        leavePending.add(s);
+                } else {
+                    if (s.getSlotId() == 1)
+                        s.setStatus("Sáng (8h-12h)");
+                    else if (s.getSlotId() == 2)
+                        s.setStatus("Chiều (13h-17h)");
+                    else if (s.getSlotId() == 3)
+                        s.setStatus("Cả ngày (8h-17h)");
+                }
+            }
+        }
+        request.setAttribute("schedules", schedules);
+        request.setAttribute("approvedSchedules", approvedSchedules);
+        request.setAttribute("leavePending", leavePending);
+        request.setAttribute("leaveApproved", leaveApproved);
+        request.setAttribute("leaveRejected", leaveRejected);
+
+        String page = request.getParameter("page");
+        if ("calendar".equals(page)) {
+            request.getRequestDispatcher("/view/jsp/doctor/doctor_lichtrongthang.jsp").forward(request, response);
+            return;
+        }
+        if ("confirmed".equals(page)) {
+            request.getRequestDispatcher("/view/jsp/doctor/doctor_lichdaxacnhan.jsp").forward(request, response);
+            return;
+        }
+        request.getRequestDispatcher("/view/jsp/doctor/doctor_dangkilich.jsp").forward(request, response);
     }
-    scheduleDAO.addSchedule(schedule);
-    // Sau khi đăng ký xong, chuyển hướng về lại trang đăng ký và truyền doctor_id để hiển thị lịch vừa đăng ký
-    response.sendRedirect(request.getContextPath() + "/DoctorRegisterScheduleServlet?doctor_id=" + doctorId);
+
+    @Override
+    protected void doPost(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        request.setCharacterEncoding("UTF-8");
+        long doctorId = Long.parseLong(request.getParameter("doctor_id"));
+        Date workDate = Date.valueOf(request.getParameter("work_date"));
+        String requestType = request.getParameter("request_type");
+
+        // Lấy thêm tham số mới
+        String leaveType = request.getParameter("leaveType");
+        String reason = request.getParameter("reason");
+
+        DoctorSchedule schedule = new DoctorSchedule();
+        schedule.setDoctorId(doctorId);
+        schedule.setWorkDate(workDate);
+
+        if ("leave".equals(requestType)) {
+            // Đăng ký nghỉ phép cho bác sĩ fulltime
+            schedule.setSlotId((Integer) null); // nghỉ phép
+            schedule.setStatus("pending");
+            System.out.println("[DEBUG] Đăng ký nghỉ phép cho doctorId=" + doctorId + ", workDate=" + workDate
+                    + ", leaveType=" + leaveType + ", reason=" + reason);
+
+        } else {
+            // Đăng ký ca làm cho bác sĩ parttime
+            String slotIdParam = request.getParameter("slot_id");
+            if (slotIdParam != null && !slotIdParam.isEmpty()) {
+                int slotId = Integer.parseInt(slotIdParam);
+                schedule.setSlotId(slotId);
+            } else {
+                schedule.setSlotId((Integer) null);
+            }
+            schedule.setStatus("pending");
+            System.out.println("[DEBUG] Đăng ký ca làm cho doctorId=" + doctorId + ", workDate=" + workDate
+                    + ", slotId=" + schedule.getSlotId());
+        }
+        scheduleDAO.addSchedule(schedule);
+        // Sau khi đăng ký xong, chuyển hướng về lại trang đăng ký và truyền doctor_id
+        // để hiển thị lịch vừa đăng ký
+        response.sendRedirect(request.getContextPath() + "/DoctorRegisterScheduleServlet?doctor_id=" + doctorId);
+    }
 }
-} 

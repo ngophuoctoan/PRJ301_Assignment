@@ -15,42 +15,67 @@ import java.util.List;
 
 /**
  * Servlet xử lý phê duyệt lịch làm việc/nghỉ phép của Staff bởi Manager
+ * 
  * @author TranHongPhuoc
  */
 
 /*
-            Servlet này có 2 nhiệm vụ chính:
-
-            doGet: Hiển thị giao diện phê duyệt lịch làm việc (dành cho MANAGER)
-
-            doPost: Xử lý hành động phê duyệt hoặc từ chối khi người quản lý nhấn nút.
-
-*/
-@WebServlet(name = "ManagerApprovalStaffScheduleServlet", urlPatterns = {"/StaffScheduleApprovalServlet"})
+ * Servlet này có 2 nhiệm vụ chính:
+ * 
+ * doGet: Hiển thị giao diện phê duyệt lịch làm việc (dành cho MANAGER)
+ * 
+ * doPost: Xử lý hành động phê duyệt hoặc từ chối khi người quản lý nhấn nút.
+ * 
+ */
+@WebServlet(name = "ManagerApprovalStaffScheduleServlet", urlPatterns = { "/ManagerProcessApprovalServlet" })
 public class ManagerApprovalStaffScheduleServlet extends HttpServlet {
-    
+
     private StaffScheduleDAO staffScheduleDAO;
-    private DoctorScheduleDAO doctorScheduleDAO;  // lấy ra ngày nghỉ 
+    private DoctorScheduleDAO doctorScheduleDAO; // lấy ra ngày nghỉ
 
     @Override
-    public void init() throws ServletException {                                                           //Khởi tạo các DAO khi servlet được load.
+    public void init() throws ServletException { // Khởi tạo các DAO khi servlet được load.
         staffScheduleDAO = new StaffScheduleDAO();
         doctorScheduleDAO = new DoctorScheduleDAO();
-    } 
+    }
 
-    @Override  
-    protected void doGet(HttpServletRequest request, HttpServletResponse response)                      // HIỂN THỊ DANH SÁCH CHỜ DUYỆT
+    @Override
+    protected void doGet(HttpServletRequest request, HttpServletResponse response) // HIỂN THỊ DANH SÁCH CHỜ DUYỆT
             throws ServletException, IOException {
-        HttpSession session = request.getSession(false); // Không tạo session mới                                  
+        HttpSession session = request.getSession(false); // Không tạo session mới
         String role = (session != null) ? (String) session.getAttribute("role") : null;
-        
+
         if (!"MANAGER".equals(role)) {
             response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
             return;
         }
         try {
+            // Xử lý flash messages
+            if (session != null) {
+                if (session.getAttribute("flash_message") != null) {
+                    request.setAttribute("message", session.getAttribute("flash_message"));
+                    session.removeAttribute("flash_message");
+                }
+                if (session.getAttribute("flash_error") != null) {
+                    request.setAttribute("error", session.getAttribute("flash_error"));
+                    session.removeAttribute("flash_error");
+                }
+            }
             // Lấy danh sách staff requests chờ phê duyệt
-            List<StaffSchedule> pendingStaffRequests = staffScheduleDAO.getPendingRequests();         // lấy ra từ danh sách DAO
+
+            // Xử lý flash messages
+            if (session != null) {
+                if (session.getAttribute("flash_message") != null) {
+                    request.setAttribute("message", session.getAttribute("flash_message"));
+                    session.removeAttribute("flash_message");
+                }
+                if (session.getAttribute("flash_error") != null) {
+                    request.setAttribute("error", session.getAttribute("flash_error"));
+                    session.removeAttribute("flash_error");
+                }
+            }
+
+            List<StaffSchedule> pendingStaffRequests = staffScheduleDAO.getPendingRequests(); // lấy ra từ danh sách DAO
             // Đảm bảo mỗi StaffSchedule có employmentType và slotId
             for (StaffSchedule s : pendingStaffRequests) {
                 if (s.getEmploymentType() == null || s.getEmploymentType().isEmpty()) {
@@ -76,25 +101,31 @@ public class ManagerApprovalStaffScheduleServlet extends HttpServlet {
     }
 
     @Override
-    protected void doPost(HttpServletRequest request, HttpServletResponse response)                                                        //doPost: Xử lý hành động phê duyệt hoặc từ chối khi người quản lý nhấn nút.
+    protected void doPost(HttpServletRequest request, HttpServletResponse response) // doPost: Xử lý hành động phê duyệt
+                                                                                    // hoặc từ chối khi người quản lý
+                                                                                    // nhấn nút.
             throws ServletException, IOException {
         request.setCharacterEncoding("UTF-8");
         HttpSession session = request.getSession(false); // Không tạo session mới
         String role = (session != null) ? (String) session.getAttribute("role") : null;
         Integer managerId = (session != null) ? (Integer) session.getAttribute("userId") : null;
         System.out.println("[DEBUG] POST /StaffScheduleApprovalServlet - role=" + role + ", managerId=" + managerId);
-        
-                                                                                                                                                                                                        // check phân quyền 
+
+        // check phân quyền
         if (!"MANAGER".equals(role) || managerId == null) {
             System.out.println("[ERROR] Không có quyền hoặc chưa đăng nhập, chuyển về login.jsp");
             response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
             return;
         }
-        
+
         try {
             String action = request.getParameter("action");
             String requestType = request.getParameter("request_type");
-            System.out.println("[DEBUG] action=" + action + ", requestType=" + requestType);                                               // check cái employment_type ||Xác định loại yêu cầu và hành động|| Gọi các hàm xử lý tương ứng
+            System.out.println("[DEBUG] action=" + action + ", requestType=" + requestType); // check cái
+                                                                                             // employment_type ||Xác
+                                                                                             // định loại yêu cầu và
+                                                                                             // hành động|| Gọi các hàm
+                                                                                             // xử lý tương ứng
             if ("staff".equals(requestType)) {
                 handleStaffRequest(request, response, managerId, action);
             } else if ("doctor".equals(requestType)) {
@@ -108,34 +139,41 @@ public class ManagerApprovalStaffScheduleServlet extends HttpServlet {
             e.printStackTrace();
             request.setAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
         }
+        // Chuyển messages sang session để hiển thị sau redirect
+        if (request.getAttribute("message") != null) {
+            session.setAttribute("flash_message", request.getAttribute("message"));
+        }
+        if (request.getAttribute("error") != null) {
+            session.setAttribute("flash_error", request.getAttribute("error"));
+        }
+
         // Luôn redirect về trang phê duyệt
         response.sendRedirect(request.getContextPath() + "/ScheduleApprovalServlet");
     }
 
-    
-    //=========================================================================
+    // =========================================================================
     /**
      * Xử lý phê duyệt/từ chối staff request
      */
-    private void handleStaffRequest(HttpServletRequest request, HttpServletResponse response, 
-                                   int managerId, String action) throws ServletException, IOException {
-        String scheduleIdStr = request.getParameter("schedule_id");                                                                                                                                            // lấy ra request
-        System.out.println("[DEBUG] handleStaffRequest - schedule_id=" + scheduleIdStr + ", action=" + action + ", managerId=" + managerId);
-        
+    private void handleStaffRequest(HttpServletRequest request, HttpServletResponse response,
+            int managerId, String action) throws ServletException, IOException {
+        String scheduleIdStr = request.getParameter("schedule_id"); // lấy ra request
+        System.out.println("[DEBUG] handleStaffRequest - schedule_id=" + scheduleIdStr + ", action=" + action
+                + ", managerId=" + managerId);
+
         if (scheduleIdStr == null || scheduleIdStr.trim().isEmpty()) {
             System.out.println("[ERROR] Schedule ID không hợp lệ!");
             request.setAttribute("error", "Schedule ID không hợp lệ!");
             return;
         }
-        
+
         try {
             long scheduleId = Long.parseLong(scheduleIdStr);
             String status = null;
             String message = null;
-            
-             
-            if ("approve".equals(action)) {                                                                                                                                           // check casi action "approve"
-                status = "approved"; 
+
+            if ("approve".equals(action)) { // check casi action "approve"
+                status = "approved";
                 message = "Đã phê duyệt thành công!";
             } else if ("reject".equals(action)) {
                 status = "rejected";
@@ -145,14 +183,17 @@ public class ManagerApprovalStaffScheduleServlet extends HttpServlet {
                 request.setAttribute("error", "Action không hợp lệ!");
                 return;
             }
-            
-            System.out.println("[DEBUG] Gọi DAO updateRequestStatus với scheduleId=" + scheduleId + ", status=" + status + ", managerId=" + managerId);
+
+            System.out.println("[DEBUG] Gọi DAO updateRequestStatus với scheduleId=" + scheduleId + ", status=" + status
+                    + ", managerId=" + managerId);
             boolean success = staffScheduleDAO.updateRequestStatus((int) scheduleId, status, managerId);
             if (success) {
-                System.out.println("[DEBUG] Cập nhật trạng thái thành công cho schedule_id=" + scheduleId + ", status=" + status);
+                System.out.println(
+                        "[DEBUG] Cập nhật trạng thái thành công cho schedule_id=" + scheduleId + ", status=" + status);
                 request.setAttribute("message", message);
             } else {
-                System.out.println("[ERROR] Cập nhật trạng thái thất bại cho schedule_id=" + scheduleId + ", status=" + status);
+                System.out.println(
+                        "[ERROR] Cập nhật trạng thái thất bại cho schedule_id=" + scheduleId + ", status=" + status);
                 request.setAttribute("error", "Cập nhật trạng thái thất bại!");
             }
         } catch (NumberFormatException e) {
@@ -168,8 +209,8 @@ public class ManagerApprovalStaffScheduleServlet extends HttpServlet {
     /**
      * Xử lý phê duyệt/từ chối doctor request
      */
-    private void handleDoctorRequest(HttpServletRequest request, HttpServletResponse response, 
-                                    int managerId, String action) throws ServletException, IOException {
+    private void handleDoctorRequest(HttpServletRequest request, HttpServletResponse response,
+            int managerId, String action) throws ServletException, IOException {
         String scheduleIdStr = request.getParameter("schedule_id");
         if (scheduleIdStr == null || scheduleIdStr.trim().isEmpty()) {
             request.setAttribute("error", "Schedule ID không hợp lệ!");
@@ -179,7 +220,7 @@ public class ManagerApprovalStaffScheduleServlet extends HttpServlet {
             long scheduleId = Long.parseLong(scheduleIdStr);
             String status = null;
             String message = null;
-            
+
             if ("approve".equals(action)) {
                 status = "approved";
                 message = "Đã phê duyệt lịch bác sĩ thành công!";
@@ -204,4 +245,4 @@ public class ManagerApprovalStaffScheduleServlet extends HttpServlet {
             request.setAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
         }
     }
-} 
+}

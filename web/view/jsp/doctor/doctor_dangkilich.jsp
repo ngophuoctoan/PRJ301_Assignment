@@ -45,8 +45,8 @@
                             <form action="${pageContext.request.contextPath}/DoctorRegisterScheduleServlet" method="POST">
                                 <div class="mb-3">
                                     <label class="form-label">Mã bác sĩ <span class="text-danger">*</span></label>
-                                    <input type="number" class="form-control" name="doctor_id" required 
-                                           value="${param.doctor_id != null ? param.doctor_id : ''}">
+                                    <input type="number" class="form-control bg-light" name="doctor_id" required readonly
+                                           value="${sessionScope.doctor_id != null ? sessionScope.doctor_id : (param.doctor_id != null ? param.doctor_id : '')}">
                                 </div>
                                 
                                 <div class="mb-3">

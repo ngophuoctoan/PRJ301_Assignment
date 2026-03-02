@@ -46,6 +46,18 @@ public class ManagerApprovalDoctorSchedulerServlet extends HttpServlet {
         }
 
         try {
+            // Xử lý flash messages
+            if (session != null) {
+                if (session.getAttribute("flash_message") != null) {
+                    request.setAttribute("message", session.getAttribute("flash_message"));
+                    session.removeAttribute("flash_message");
+                }
+                if (session.getAttribute("flash_error") != null) {
+                    request.setAttribute("error", session.getAttribute("flash_error"));
+                    session.removeAttribute("flash_error");
+                }
+            }
+
             // Lấy danh sách doctor schedules chờ phê duyệt (chỉ lấy status 'pending')
             List<DoctorSchedule> pendingDoctorSchedules = new ArrayList<>();
             try {
