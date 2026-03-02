@@ -169,17 +169,16 @@ public class StaffBookingServlet extends HttpServlet {
             }
             request.setAttribute("specialties", specialties);
 
-            // Lấy lịch hẹn hôm nay với error handling
-            List<Appointment> todayAppointments = new ArrayList<>();
+            // Lấy lịch hẹn và đếm số liệu
             int confirmedCount = 0;
             int pendingCount = 0;
             int completedCount = 0;
             try {
                 Date today = new Date(System.currentTimeMillis());
                 AppointmentDAO appointmentDAO = new AppointmentDAO();
-                todayAppointments = appointmentDAO.getAppointmentsByDate(today);
+                List<Appointment> todayAppsForCount = appointmentDAO.getAppointmentsByDate(today);
 
-                for (Appointment ap : todayAppointments) {
+                for (Appointment ap : todayAppsForCount) {
                     if ("BOOKED".equals(ap.getStatus())) {
                         confirmedCount++;
                     } else if ("WAITING_PAYMENT".equals(ap.getStatus())) {
@@ -189,9 +188,26 @@ public class StaffBookingServlet extends HttpServlet {
                     }
                 }
             } catch (Exception e) {
-                System.err.println("Error loading today appointments: " + e.getMessage());
+                System.err.println("Error loading today appointments counts: " + e.getMessage());
             }
-            request.setAttribute("todayAppointments", todayAppointments);
+
+            // Xử lý bộ lọc tìm kiếm
+            String searchPatientName = request.getParameter("patientName");
+            String searchAppointmentDate = request.getParameter("appointmentDate");
+            String searchStatus = request.getParameter("status");
+
+            request.setAttribute("searchPatientName", searchPatientName);
+            request.setAttribute("searchAppointmentDate", searchAppointmentDate);
+            request.setAttribute("searchStatus", searchStatus);
+
+            List<Appointment> displayedAppointments = new ArrayList<>();
+            try {
+                displayedAppointments = AppointmentDAO.searchAppointments(searchPatientName, searchAppointmentDate,
+                        searchStatus);
+            } catch (Exception e) {
+                System.err.println("Error loading displayed appointments: " + e.getMessage());
+            }
+            request.setAttribute("todayAppointments", displayedAppointments); // Vẫn dùng biến này để khỏi sửa JSP nhiều
             request.setAttribute("confirmedCount", confirmedCount);
             request.setAttribute("pendingCount", pendingCount);
             request.setAttribute("completedCount", completedCount);
@@ -393,6 +409,9 @@ public class StaffBookingServlet extends HttpServlet {
                 int slotId = Integer.parseInt(request.getParameter("slotId"));
                 Date workDate = Date.valueOf(request.getParameter("workDate"));
                 String reason = request.getParameter("reason");
+                String serviceIdStr = request.getParameter("serviceId");
+                int serviceId = (serviceIdStr != null && !serviceIdStr.isEmpty()) ? Integer.parseInt(serviceIdStr) : 0;
+
                 Appointment appointment = new Appointment();
                 appointment.setPatientId(patientId);
                 appointment.setDoctorId(doctorId);
@@ -400,12 +419,22 @@ public class StaffBookingServlet extends HttpServlet {
                 appointment.setWorkDate(workDate.toLocalDate());
                 appointment.setReason(reason);
                 appointment.setStatus("BOOKED");
+                if (serviceId > 0) {
+                    appointment.setServiceId(serviceId);
+                }
+
                 AppointmentDAO appointmentDAO = new AppointmentDAO();
                 int appointmentId = appointmentDAO.createAppointment(appointment);
-                // ... xử lý tiếp ...
+
+                if (appointmentId > 0) {
+                    request.setAttribute("successMessage", "Đặt lịch hẹn thành công!");
+                } else {
+                    request.setAttribute("error", "Lỗi: Không thể đặt lịch hẹn mới.");
+                }
             }
         } catch (Exception e) {
-            // ... xử lý lỗi ...
+            e.printStackTrace();
+            request.setAttribute("error", "Lỗi: " + e.getMessage());
         }
         doGet(request, response);
     }

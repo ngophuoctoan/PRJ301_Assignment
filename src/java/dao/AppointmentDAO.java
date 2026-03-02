@@ -35,8 +35,8 @@ public class AppointmentDAO {
     private static final String GET_ALL = "SELECT * FROM Appointment";
     private static final String GET_BY_ID = "SELECT * FROM Appointment WHERE appointment_id = ?";
     private static final String GET_BY_DATE = "SELECT * FROM Appointment WHERE work_date = ?";
-    private static final String INSERT = "INSERT INTO Appointment (patient_id, doctor_id, slot_id, work_date, reason, status) VALUES (?, ?, ?, ?, ?, ?)";
-    private static final String UPDATE = "UPDATE Appointment SET patient_id = ?, doctor_id = ?, slot_id = ?, work_date = ?, reason = ?, status = ? WHERE appointment_id = ?";
+    private static final String INSERT = "INSERT INTO Appointment (patient_id, doctor_id, slot_id, work_date, reason, status, service_id) VALUES (?, ?, ?, ?, ?, ?, ?)";
+    private static final String UPDATE = "UPDATE Appointment SET patient_id = ?, doctor_id = ?, slot_id = ?, work_date = ?, reason = ?, status = ?, service_id = ? WHERE appointment_id = ?";
     private static final String UPDATE_STATUS = "UPDATE Appointment SET status = ? WHERE appointment_id = ?";
     private static final String DELETE = "DELETE FROM Appointment WHERE appointment_id = ?";
 
@@ -145,15 +145,15 @@ public class AppointmentDAO {
             conn = DBContext.getConnection();
             if (conn != null) {
                 String sql = """
-                            SELECT a.*,
+                            SELECT a.appointment_id, a.patient_id, a.doctor_id, a.work_date, a.slot_id, a.status, a.reason,
                                    p.full_name as patient_name,
                                    p.phone as patient_phone,
                                    d.full_name as doctor_name,
                                    d.specialty as doctor_specialty,
                                    ts.start_time,
                                    ts.end_time,
-                                   s.service_name,
-                                   s.price as service_price
+                                   COALESCE(s2.service_name, s.service_name) as service_name,
+                                   COALESCE(s2.price, s.price) as service_price
                             FROM Appointment a
                             LEFT JOIN Patients p ON a.patient_id = p.patient_id
                             LEFT JOIN Doctors d ON a.doctor_id = d.doctor_id
@@ -162,6 +162,7 @@ public class AppointmentDAO {
                                 AND b.appointment_date = a.work_date
                                 AND b.doctor_id = a.doctor_id
                             LEFT JOIN Services s ON b.service_id = s.service_id
+                            LEFT JOIN Services s2 ON a.service_id = s2.service_id
                             WHERE a.work_date = ?
                             ORDER BY ts.start_time ASC
                         """;
@@ -195,6 +196,85 @@ public class AppointmentDAO {
     }
 
     /**
+     * Tìm kiếm appointments với multiple conditions
+     */
+    public static List<Appointment> searchAppointments(String patientName, String appointmentDate, String status)
+            throws SQLException {
+        Connection conn = null;
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+        List<Appointment> appointments = new ArrayList<>();
+        try {
+            conn = DBContext.getConnection();
+            if (conn != null) {
+                StringBuilder sql = new StringBuilder(
+                        """
+                                    SELECT a.appointment_id, a.patient_id, a.doctor_id, a.work_date, a.slot_id, a.status, a.reason,
+                                           p.full_name as patient_name,
+                                           p.phone as patient_phone,
+                                           d.full_name as doctor_name,
+                                           d.specialty as doctor_specialty,
+                                           ts.start_time,
+                                           ts.end_time,
+                                           COALESCE(s2.service_name, s.service_name) as service_name,
+                                           COALESCE(s2.price, s.price) as service_price
+                                    FROM Appointment a
+                                    LEFT JOIN Patients p ON a.patient_id = p.patient_id
+                                    LEFT JOIN Doctors d ON a.doctor_id = d.doctor_id
+                                    LEFT JOIN TimeSlot ts ON a.slot_id = ts.slot_id
+                                    LEFT JOIN Bills b ON b.patient_id = a.patient_id
+                                        AND b.appointment_date = a.work_date
+                                        AND b.doctor_id = a.doctor_id
+                                    LEFT JOIN Services s ON b.service_id = s.service_id
+                                    LEFT JOIN Services s2 ON a.service_id = s2.service_id
+                                    WHERE 1=1
+                                """);
+
+                List<Object> params = new ArrayList<>();
+
+                if (patientName != null && !patientName.trim().isEmpty()) {
+                    sql.append(" AND (p.full_name LIKE ? OR p.phone LIKE ?)");
+                    params.add("%" + patientName.trim() + "%");
+                    params.add("%" + patientName.trim() + "%");
+                }
+                if (appointmentDate != null && !appointmentDate.trim().isEmpty()) {
+                    sql.append(" AND a.work_date = ?");
+                    params.add(java.sql.Date.valueOf(appointmentDate));
+                }
+                if (status != null && !status.trim().isEmpty()) {
+                    sql.append(" AND a.status = ?");
+                    params.add(status);
+                }
+
+                sql.append(" ORDER BY a.work_date ASC, ts.start_time ASC");
+
+                ps = conn.prepareStatement(sql.toString());
+                for (int i = 0; i < params.size(); i++) {
+                    ps.setObject(i + 1, params.get(i));
+                }
+
+                rs = ps.executeQuery();
+                while (rs.next()) {
+                    Appointment appointment = mapResultSetToAppointmentWithDetails(rs);
+                    appointment.setPatientPhone(rs.getString("patient_phone"));
+                    String serviceName = rs.getString("service_name");
+                    if (serviceName != null) {
+                        appointment.setServiceName(serviceName);
+                    } else {
+                        appointment.setServiceName("Chưa có dịch vụ");
+                    }
+                    appointments.add(appointment);
+                }
+            }
+        } catch (Exception e) {
+            e.printStackTrace();
+        } finally {
+            util.DBContext.close(rs, ps, conn);
+        }
+        return appointments;
+    }
+
+    /**
      * Tạo appointment mới (chuẩn OOP - nhận đối tượng Appointment)
      */
     public static int createAppointment(Appointment appointment) throws SQLException {
@@ -212,6 +292,11 @@ public class AppointmentDAO {
                 ps.setDate(4, java.sql.Date.valueOf(appointment.getWorkDate()));
                 ps.setString(5, appointment.getReason());
                 ps.setString(6, appointment.getStatus());
+                if (appointment.getServiceId() > 0) {
+                    ps.setInt(7, appointment.getServiceId());
+                } else {
+                    ps.setNull(7, java.sql.Types.INTEGER);
+                }
 
                 int rowsAffected = ps.executeUpdate();
                 if (rowsAffected > 0) {

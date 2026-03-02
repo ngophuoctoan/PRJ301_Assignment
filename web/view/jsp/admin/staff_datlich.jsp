@@ -178,18 +178,18 @@
                     <form method="GET" action="${pageContext.request.contextPath}/StaffBookingServlet">
                                                         <div class="row g-3">
                                                             <div class="col-md-3">
-                                <input type="text" name="patientName" class="form-control" placeholder="Tên bệnh nhân">
+                                <input type="text" name="patientName" class="form-control" placeholder="Tên bệnh nhân" value="${searchPatientName}">
                                                             </div>
                                                             <div class="col-md-3">
-                                <input type="date" name="appointmentDate" class="form-control">
+                                <input type="date" name="appointmentDate" class="form-control" value="${searchAppointmentDate}">
                                                             </div>
                                                             <div class="col-md-3">
                                                                 <select name="status" class="form-select">
-                                                                    <option value="">Tất cả trạng thái</option>
-                                                                    <option value="BOOKED">Đã đặt lịch</option>
-                                                                    <option value="COMPLETED">Hoàn thành</option>
-                                                                    <option value="CANCELLED">Đã hủy</option>
-                                    <option value="WAITING_PAYMENT">Chờ thanh toán</option>
+                                                                    <option value="" ${empty searchStatus ? 'selected' : ''}>Tất cả trạng thái</option>
+                                                                    <option value="BOOKED" ${searchStatus == 'BOOKED' ? 'selected' : ''}>Đã xác nhận</option>
+                                                                    <option value="COMPLETED" ${searchStatus == 'COMPLETED' ? 'selected' : ''}>Hoàn thành</option>
+                                                                    <option value="CANCELLED" ${searchStatus == 'CANCELLED' ? 'selected' : ''}>Đã hủy</option>
+                                    <option value="WAITING_PAYMENT" ${searchStatus == 'WAITING_PAYMENT' ? 'selected' : ''}>Chờ thanh toán</option>
                                                                 </select>
                                                             </div>
                                                             <div class="col-md-3">
@@ -203,7 +203,7 @@
 
                 <!-- Appointments Table -->
                 <div class="dashboard-card">
-                    <h6 class="mb-3"><i class="fas fa-list me-2"></i>Danh sách lịch hẹn hôm nay</h6>
+                    <h6 class="mb-3"><i class="fas fa-list me-2"></i>Danh sách tất cả lịch hẹn</h6>
                                                     <div class="table-responsive">
                         <table class="dashboard-table">
                             <thead>
@@ -223,7 +223,7 @@
                                                                         <tr>
                                             <td colspan="7" class="text-center py-5">
                                                 <i class="fas fa-calendar-times text-muted" style="font-size: 48px;"></i>
-                                                <p class="text-muted mt-3">Chưa có lịch hẹn nào hôm nay</p>
+                                                <p class="text-muted mt-3">Không tìm thấy lịch hẹn nào</p>
                                                                             </td>
                                                                         </tr>
                                                                     </c:when>

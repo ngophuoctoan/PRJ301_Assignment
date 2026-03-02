@@ -18,10 +18,6 @@
                     <!-- Dashboard Header -->
                     <header class="dashboard-header">
                         <div class="header-left">
-                            <div class="header-search">
-                                <i class="fas fa-search"></i>
-                                <input type="text" placeholder="Tìm kiếm bệnh nhân, lịch hẹn..." class="form-control">
-                            </div>
                         </div>
 
                         <div class="header-right">
