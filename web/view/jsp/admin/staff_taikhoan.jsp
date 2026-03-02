@@ -85,13 +85,11 @@
                             <h6 class="mb-3"><i class="fas fa-envelope me-2"></i>Cập nhật Email</h6>
                             <form method="post" action="${pageContext.request.contextPath}/StaffUpdateServlet">
                                 <input type="hidden" name="type" value="email">
-                                <div class="row align-items-end">
-                                    <div class="col-md-8 mb-3 mb-md-0">
-                                        <label class="form-label">Email</label>
+                                <div class="mb-3">
+                                    <label class="form-label">Email</label>
+                                    <div class="d-flex gap-2">
                                         <input type="email" class="form-control" name="value" value="<%= staffUser.getEmail() %>" required>
-                                    </div>
-                                    <div class="col-md-4">
-                                        <button type="submit" class="btn btn-primary w-100">Cập nhật Email</button>
+                                        <button type="submit" class="btn btn-primary text-nowrap px-4">Cập nhật Email</button>
                                     </div>
                                 </div>
                             </form>

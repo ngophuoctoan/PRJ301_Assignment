@@ -12,7 +12,7 @@ import model.User;
 import dao.StaffDAO;
 import dao.UserDAO;
 
-@WebServlet(name = "StaffProfileServlet", urlPatterns = {"/StaffProfileServlet"})
+@WebServlet(name = "StaffProfileServlet", urlPatterns = { "/StaffProfileServlet" })
 public class StaffProfileServlet extends HttpServlet {
 
     private static final String RETURN_URL = "/view/jsp/admin/staff_taikhoan.jsp";
@@ -41,11 +41,16 @@ public class StaffProfileServlet extends HttpServlet {
             request.setAttribute("error", "Lỗi lấy thông tin nhân viên: " + e.getMessage());
         }
 
-        // Lấy thông báo thành công từ session (nếu có)
+        // Lấy thông báo thành công/lỗi từ session (nếu có)
         String success = (String) session.getAttribute("success");
         if (success != null) {
             request.setAttribute("success", success);
             session.removeAttribute("success");
+        }
+        String sessionError = (String) session.getAttribute("error");
+        if (sessionError != null) {
+            request.setAttribute("error", sessionError);
+            session.removeAttribute("error");
         }
 
         request.setAttribute("staff", staff);
@@ -112,10 +117,12 @@ public class StaffProfileServlet extends HttpServlet {
         }
 
         String fullName = request.getParameter("fullName");
-        if (fullName != null && !fullName.trim().isEmpty()) staff.setFullName(fullName);
+        if (fullName != null && !fullName.trim().isEmpty())
+            staff.setFullName(fullName);
 
         String phone = request.getParameter("phone");
-        if (phone != null && !phone.trim().isEmpty()) staff.setPhone(phone);
+        if (phone != null && !phone.trim().isEmpty())
+            staff.setPhone(phone);
 
         String dobStr = request.getParameter("dateOfBirth");
         if (dobStr != null && !dobStr.trim().isEmpty()) {
@@ -129,16 +136,20 @@ public class StaffProfileServlet extends HttpServlet {
         }
 
         String gender = request.getParameter("gender");
-        if (gender != null && !gender.trim().isEmpty()) staff.setGender(gender);
+        if (gender != null && !gender.trim().isEmpty())
+            staff.setGender(gender);
 
         String address = request.getParameter("address");
-        if (address != null && !address.trim().isEmpty()) staff.setAddress(address);
+        if (address != null && !address.trim().isEmpty())
+            staff.setAddress(address);
 
         String position = request.getParameter("position");
-        if (position != null && !position.trim().isEmpty()) staff.setPosition(position);
+        if (position != null && !position.trim().isEmpty())
+            staff.setPosition(position);
 
         String employmentType = request.getParameter("employmentType");
-        if (employmentType != null && !employmentType.trim().isEmpty()) staff.setEmploymentType(employmentType);
+        if (employmentType != null && !employmentType.trim().isEmpty())
+            staff.setEmploymentType(employmentType);
 
         if (StaffDAO.updateStaff(staff)) {
             request.setAttribute("success", "Cập nhật thông tin thành công.");
@@ -158,8 +169,9 @@ public class StaffProfileServlet extends HttpServlet {
             String position = request.getParameter("position");
             String employmentType = request.getParameter("employmentType");
 
-            if (fullName == null || phone == null || dob == null || gender == null || address == null || position == null || employmentType == null ||
-                fullName.isEmpty() || phone.isEmpty()) {
+            if (fullName == null || phone == null || dob == null || gender == null || address == null
+                    || position == null || employmentType == null ||
+                    fullName.isEmpty() || phone.isEmpty()) {
                 request.setAttribute("error", "Vui lòng nhập đầy đủ thông tin.");
                 return;
             }
@@ -188,11 +200,11 @@ public class StaffProfileServlet extends HttpServlet {
 
         User user = UserDAO.getUserById(userId);
         if ((newPass != null && !newPass.trim().isEmpty()) ||
-            (confirmPass != null && !confirmPass.trim().isEmpty()) ||
-            (oldPass != null && !oldPass.trim().isEmpty())) {
+                (confirmPass != null && !confirmPass.trim().isEmpty()) ||
+                (oldPass != null && !oldPass.trim().isEmpty())) {
 
             if (oldPass == null || newPass == null || confirmPass == null ||
-                oldPass.isEmpty() || newPass.isEmpty() || confirmPass.isEmpty()) {
+                    oldPass.isEmpty() || newPass.isEmpty() || confirmPass.isEmpty()) {
                 request.setAttribute("error", "Vui lòng điền đủ thông tin đổi mật khẩu.");
                 return false;
             }
