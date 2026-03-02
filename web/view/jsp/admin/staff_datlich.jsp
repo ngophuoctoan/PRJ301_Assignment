@@ -243,220 +243,229 @@
                                                                                 <td>${apt.serviceName}</td>
                                                                                 <td>
                                                     <span class="badge bg-${apt.status == 'BOOKED' ? 'success' : apt.status == 'WAITING_PAYMENT' ? 'warning' : apt.status == 'COMPLETED' ? 'primary' : 'danger'}">
-                                                        ${apt.status == 'BOOKED' ? 'Đã đặt' : apt.status == 'WAITING_PAYMENT' ? 'Chờ TT' : apt.status == 'COMPLETED' ? 'Hoàn thành' : 'Đã hủy'}
-                                                                                    </span>
-                                                                                </td>
-                                                                                <td>
+                                                        ${apt.status == 'BOOKED' ? 'Đã xác nhận' : apt.status == 'WAITING_PAYMENT' ? 'Chờ TT' : apt.status == 'COMPLETED' ? 'Hoàn thành' : 'Đã hủy'}
+                                                    </span>
+                                                </td>
+                                                <td>
                                                     <button class="btn btn-sm btn-outline-info me-1" title="Xem" onclick="viewAppointmentDetail('${apt.appointmentId}')">
-                                                                                        <i class="fas fa-eye"></i>
-                                                                                    </button>
+                                                        <i class="fas fa-eye"></i>
+                                                    </button>
                                                     <c:if test="${apt.status != 'COMPLETED' && apt.status != 'CANCELLED'}">
-                                                        <button class="btn btn-sm btn-outline-success me-1" title="Xác nhận" onclick="confirmAppointment('${apt.appointmentId}')">
-                                                                                            <i class="fas fa-check"></i>
-                                                                                        </button>
+                                                        <c:choose>
+                                                            <c:when test="${apt.status == 'WAITING_PAYMENT'}">
+                                                                <button class="btn btn-sm btn-outline-success me-1" title="Xác nhận thanh toán" onclick="confirmAppointment('${apt.appointmentId}')">
+                                                                    <i class="fas fa-check"></i>
+                                                                </button>
+                                                            </c:when>
+                                                            <c:when test="${apt.status == 'BOOKED'}">
+                                                                <button class="btn btn-sm btn-outline-primary me-1" title="Đánh dấu hoàn thành" onclick="completeAppointment('${apt.appointmentId}')">
+                                                                    <i class="fas fa-check-double"></i>
+                                                                </button>
+                                                            </c:when>
+                                                        </c:choose>
                                                         <button class="btn btn-sm btn-outline-danger" title="Hủy" onclick="cancelAppointment('${apt.appointmentId}')">
-                                                                                            <i class="fas fa-times"></i>
-                                                                                        </button>
-                                                                                    </c:if>
-                                                                                </td>
-                                                                            </tr>
-                                                                        </c:forEach>
-                                                                    </c:otherwise>
-                                                                </c:choose>
-                                                            </tbody>
-                                                        </table>
-                                                    </div>
-                                                </div>
+                                                            <i class="fas fa-times"></i>
+                                                        </button>
+                                                    </c:if>
+                                                </td>
+                                            </tr>
+                                        </c:forEach>
+                                    </c:otherwise>
+                                </c:choose>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
             </div>
         </main>
-                                            </div>
+    </div>
 
-                                            <!-- Modal đặt lịch mới -->
+    <!-- Modal đặt lịch mới -->
     <div class="modal fade" id="newAppointmentModal" tabindex="-1">
-                                                <div class="modal-dialog modal-lg">
-                                                    <div class="modal-content">
-                                                        <div class="modal-header">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
                     <h5 class="modal-title"><i class="fas fa-calendar-plus me-2"></i>Đặt lịch hẹn mới</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
-                                                        </div>
-                                                        <div class="modal-body">
+                </div>
+                <div class="modal-body">
                     <!-- Step Indicator -->
-                                                            <div class="step-indicator">
+                    <div class="step-indicator">
                         <div class="step active" id="step1">1. Chọn bệnh nhân</div>
-                                                                <div class="step" id="step2">2. Chọn dịch vụ</div>
+                        <div class="step" id="step2">2. Chọn dịch vụ</div>
                         <div class="step" id="step3">3. Chọn bác sĩ & thời gian</div>
-                                                                <div class="step" id="step4">4. Xác nhận</div>
-                                                            </div>
+                        <div class="step" id="step4">4. Xác nhận</div>
+                    </div>
 
                     <form id="appointmentForm" action="${pageContext.request.contextPath}/StaffBookingServlet" method="post">
                         <input type="hidden" name="action" value="book_appointment">
 
-                                                                <!-- Bước 1: Chọn bệnh nhân -->
-                                                                <div class="form-step active" id="step1Content">
-                                                                    <h6>Tìm kiếm và chọn bệnh nhân</h6>
-                                                                    <div class="row mb-3">
+                        <!-- Bước 1: Chọn bệnh nhân -->
+                        <div class="form-step active" id="step1Content">
+                            <h6>Tìm kiếm và chọn bệnh nhân</h6>
+                            <div class="row mb-3">
                                 <div class="col-md-8">
                                     <input type="text" id="patientSearch" class="form-control" placeholder="Nhập tên hoặc số điện thoại">
-                                                                        </div>
+                                </div>
                                 <div class="col-md-4">
                                     <button type="button" class="btn btn-outline-primary w-100" onclick="searchPatients()">
                                         <i class="fas fa-search me-1"></i>Tìm kiếm
-                                                                            </button>
-                                                                        </div>
-                                                                    </div>
+                                    </button>
+                                </div>
+                            </div>
                             <div id="patientResults"></div>
                             <input type="hidden" name="patientId" id="selectedPatientId">
-                                                                </div>
+                        </div>
 
-                                                                <!-- Bước 2: Chọn dịch vụ -->
-                                                                <div class="form-step" id="step2Content">
-                                                                    <h6>Chọn dịch vụ khám</h6>
-                                                                    <div class="row">
+                        <!-- Bước 2: Chọn dịch vụ -->
+                        <div class="form-step" id="step2Content">
+                            <h6>Chọn dịch vụ khám</h6>
+                            <div class="row">
                                 <c:forEach items="${services}" var="service">
-                                                                                    <div class="col-md-6 mb-2">
+                                    <div class="col-md-6 mb-2">
                                         <div class="service-item" data-service-id="${service.serviceId}" data-service-name="${service.serviceName}" data-service-price="${service.price}" onclick="selectService(this)">
                                             <h6 class="mb-1">${service.serviceName}</h6>
                                             <small class="text-muted">${service.description}</small>
                                             <div class="d-flex justify-content-between mt-2">
                                                 <span class="badge bg-info">${service.category}</span>
                                                 <strong class="text-success"><fmt:formatNumber value="${service.price}" pattern="#,##0"/> VNĐ</strong>
-                                                                                            </div>
-                                                                                        </div>
-                                                                                    </div>
-                                                                                </c:forEach>
-                                                                    </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                </c:forEach>
+                            </div>
                             <input type="hidden" name="serviceId" id="selectedServiceId">
-                                                                </div>
+                        </div>
 
-                                                                <!-- Bước 3: Chọn bác sĩ và thời gian -->
-                                                                <div class="form-step" id="step3Content">
-                                                                    <h6>Chọn bác sĩ và thời gian</h6>
-                                                                    <div class="row mb-3">
-                                                                        <div class="col-md-6">
+                        <!-- Bước 3: Chọn bác sĩ và thời gian -->
+                        <div class="form-step" id="step3Content">
+                            <h6>Chọn bác sĩ và thời gian</h6>
+                            <div class="row mb-3">
+                                <div class="col-md-6">
                                     <label class="form-label">Chọn bác sĩ:</label>
                                     <select name="doctorId" id="doctorSelect" class="form-select" onchange="loadTimeSlots()">
                                         <option value="">-- Chọn bác sĩ --</option>
                                         <c:forEach items="${doctors}" var="doctor">
                                             <option value="${doctor.doctorId}">${doctor.fullName} - ${doctor.specialty}</option>
-                                                                                        </c:forEach>
-                                                                            </select>
-                                                                        </div>
-                                                                        <div class="col-md-6">
-                                                                            <label class="form-label">Chọn ngày:</label>
+                                        </c:forEach>
+                                    </select>
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label">Chọn ngày:</label>
                                     <input type="date" name="workDate" id="workDateInput" class="form-control" onchange="loadTimeSlots()">
-                                                                        </div>
-                                                                    </div>
-                                                                    <div id="timeSlotsContainer" style="display: none;">
-                                                                        <label class="form-label">Chọn giờ khám:</label>
+                                </div>
+                            </div>
+                            <div id="timeSlotsContainer" style="display: none;">
+                                <label class="form-label">Chọn giờ khám:</label>
                                 <div class="time-slots" id="timeSlots"></div>
-                                                                        </div>
+                            </div>
                             <input type="hidden" name="slotId" id="selectedSlotId">
-                                                                </div>
+                        </div>
 
                         <!-- Bước 4: Xác nhận -->
-                                                                <div class="form-step" id="step4Content">
+                        <div class="form-step" id="step4Content">
                             <h6>Xác nhận thông tin</h6>
                             <div class="dashboard-card mb-3" id="appointmentSummary"></div>
-                                                                    <div class="mb-3">
+                            <div class="mb-3">
                                 <label class="form-label">Lý do khám / Ghi chú:</label>
                                 <textarea name="reason" class="form-control" rows="3" placeholder="Nhập lý do khám..."></textarea>
-                                                                    </div>
-                                                                </div>
-                                                            </form>
-                                                        </div>
-                                                        <div class="modal-footer">
+                            </div>
+                        </div>
+                    </form>
+                </div>
+                <div class="modal-footer">
                     <button type="button" class="btn btn-secondary" id="prevBtn" onclick="previousStep()" style="display: none;">
-                                                                <i class="fas fa-arrow-left me-1"></i>Quay lại
-                                                            </button>
+                        <i class="fas fa-arrow-left me-1"></i>Quay lại
+                    </button>
                     <button type="button" class="btn btn-primary" id="nextBtn" onclick="nextStep()">
-                                                                Tiếp theo<i class="fas fa-arrow-right ms-1"></i>
-                                                            </button>
+                        Tiếp theo<i class="fas fa-arrow-right ms-1"></i>
+                    </button>
                     <button type="submit" class="btn btn-success" id="submitBtn" form="appointmentForm" style="display: none;">
-                                                                <i class="fas fa-check me-1"></i>Đặt lịch
-                                                            </button>
-                                                    </div>
-                                                </div>
-                                            </div>
-                                            </div>
+                        <i class="fas fa-check me-1"></i>Đặt lịch
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
 
     <%@ include file="/view/layout/dashboard_scripts.jsp" %>
-                                            <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
     <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     
-                                            <script>
-                                                let currentStep = 1;
-                                                const totalSteps = 4;
-                                                let selectedPatient = null;
-                                                let selectedService = null;
-                                                let selectedDoctor = null;
-                                                let selectedSlot = null;
+    <script>
+        let currentStep = 1;
+        const totalSteps = 4;
+        let selectedPatient = null;
+        let selectedService = null;
+        let selectedDoctor = null;
+        let selectedSlot = null;
 
         document.addEventListener('DOMContentLoaded', function() {
-                                                    flatpickr("#workDateInput", {
-                                                        dateFormat: "Y-m-d",
+            flatpickr("#workDateInput", {
+                dateFormat: "Y-m-d",
                 minDate: "today"
-                                                    });
-                                                });
+            });
+        });
 
-                                                function nextStep() {
-                                                    if (validateCurrentStep()) {
-                                                        if (currentStep < totalSteps) {
-                                                            document.getElementById('step' + currentStep + 'Content').classList.remove('active');
-                                                            document.getElementById('step' + currentStep).classList.remove('active');
-                                                            document.getElementById('step' + currentStep).classList.add('completed');
-                                                            currentStep++;
-                                                            document.getElementById('step' + currentStep + 'Content').classList.add('active');
-                                                            document.getElementById('step' + currentStep).classList.add('active');
-                                                            updateButtons();
+        function nextStep() {
+            if (validateCurrentStep()) {
+                if (currentStep < totalSteps) {
+                    document.getElementById('step' + currentStep + 'Content').classList.remove('active');
+                    document.getElementById('step' + currentStep).classList.remove('active');
+                    document.getElementById('step' + currentStep).classList.add('completed');
+                    currentStep++;
+                    document.getElementById('step' + currentStep + 'Content').classList.add('active');
+                    document.getElementById('step' + currentStep).classList.add('active');
+                    updateButtons();
                     if (currentStep === 4) updateAppointmentSummary();
-                                                        }
-                                                    }
-                                                }
+                }
+            }
+        }
 
-                                                function previousStep() {
-                                                    if (currentStep > 1) {
-                                                        document.getElementById('step' + currentStep + 'Content').classList.remove('active');
-                                                        document.getElementById('step' + currentStep).classList.remove('active');
-                                                        currentStep--;
-                                                        document.getElementById('step' + currentStep + 'Content').classList.add('active');
-                                                        document.getElementById('step' + currentStep).classList.remove('completed');
-                                                        document.getElementById('step' + currentStep).classList.add('active');
-                                                        updateButtons();
-                                                    }
-                                                }
+        function previousStep() {
+            if (currentStep > 1) {
+                document.getElementById('step' + currentStep + 'Content').classList.remove('active');
+                document.getElementById('step' + currentStep).classList.remove('active');
+                currentStep--;
+                document.getElementById('step' + currentStep + 'Content').classList.add('active');
+                document.getElementById('step' + currentStep).classList.remove('completed');
+                document.getElementById('step' + currentStep).classList.add('active');
+                updateButtons();
+            }
+        }
 
-                                                function updateButtons() {
+        function updateButtons() {
             document.getElementById('prevBtn').style.display = currentStep > 1 ? 'inline-block' : 'none';
             document.getElementById('nextBtn').style.display = currentStep < totalSteps ? 'inline-block' : 'none';
             document.getElementById('submitBtn').style.display = currentStep === totalSteps ? 'inline-block' : 'none';
         }
 
-                                                function validateCurrentStep() {
-                                                    switch (currentStep) {
+        function validateCurrentStep() {
+            switch (currentStep) {
                 case 1: if (!selectedPatient) { alert('Vui lòng chọn bệnh nhân'); return false; } break;
                 case 2: if (!selectedService) { alert('Vui lòng chọn dịch vụ'); return false; } break;
                 case 3: if (!selectedDoctor || !selectedSlot) { alert('Vui lòng chọn bác sĩ và thời gian'); return false; } break;
-                                                    }
-                                                    return true;
-                                                }
+            }
+            return true;
+        }
 
-                                                function searchPatients() {
-                                                    const searchTerm = document.getElementById('patientSearch').value;
+        function searchPatients() {
+            const searchTerm = document.getElementById('patientSearch').value;
             if (!searchTerm.trim()) { alert('Vui lòng nhập thông tin tìm kiếm'); return; }
             document.getElementById('patientResults').innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tìm...</div>';
-                                                    fetch('${pageContext.request.contextPath}/StaffBookingServlet?action=search_patient&format=json&phone=' + encodeURIComponent(searchTerm))
+            fetch('${pageContext.request.contextPath}/StaffBookingServlet?action=search_patient&format=json&phone=' + encodeURIComponent(searchTerm))
                 .then(r => r.json())
-                                                        .then(patients => {
-                                                    let html = '';
-                                                    if (patients && patients.length > 0) {
+                .then(patients => {
+                    let html = '';
+                    if (patients && patients.length > 0) {
                         patients.forEach(p => {
                             html += '<div class="patient-item" data-patient-id="' + p.patientId + '" data-patient-name="' + p.fullName + '" data-patient-phone="' + p.phone + '" onclick="selectPatient(this)">' +
                                 '<strong>' + p.fullName + '</strong><br><small class="text-muted">SĐT: ' + p.phone + '</small></div>';
-                                                        });
-                                                    } else {
+                        });
+                    } else {
                         html = '<div class="text-center text-muted">Không tìm thấy bệnh nhân</div>';
-                                                    }
-                                                    document.getElementById('patientResults').innerHTML = html;
+                    }
+                    document.getElementById('patientResults').innerHTML = html;
                 });
         }
 
@@ -472,28 +481,28 @@
             document.getElementById('selectedServiceId').value = selectedService.id;
             document.querySelectorAll('.service-item').forEach(i => i.classList.remove('selected'));
             el.classList.add('selected');
-                                                }
+        }
 
-                                                function loadTimeSlots() {
-                                                    const doctorId = document.getElementById('doctorSelect').value;
-                                                    const workDate = document.getElementById('workDateInput').value;
-                                                    if (doctorId && workDate) {
-                                                        selectedDoctor = doctorId;
+        function loadTimeSlots() {
+            const doctorId = document.getElementById('doctorSelect').value;
+            const workDate = document.getElementById('workDateInput').value;
+            if (doctorId && workDate) {
+                selectedDoctor = doctorId;
                 document.getElementById('timeSlots').innerHTML = '<div class="text-center"><i class="fas fa-spinner fa-spin"></i> Đang tải...</div>';
-                                                        document.getElementById('timeSlotsContainer').style.display = 'block';
+                document.getElementById('timeSlotsContainer').style.display = 'block';
                 fetch('${pageContext.request.contextPath}/StaffBookingServlet?action=get_timeslots&doctorId=' + doctorId + '&workDate=' + workDate)
                     .then(r => r.json())
-                                                            .then(slots => {
-                                                                let html = '';
-                                                                if (slots.length === 0) {
+                    .then(slots => {
+                        let html = '';
+                        if (slots.length === 0) {
                             html = '<div class="alert alert-warning">Không có khung giờ khả dụng</div>';
-                                                                } else {
+                        } else {
                             slots.forEach(s => {
                                 html += '<div class="time-slot' + (s.isBooked ? ' booked' : '') + '" data-slot-id="' + s.slotId + '" data-start-time="' + s.startTime + '" data-end-time="' + s.endTime + '"' + (!s.isBooked ? ' onclick="selectTimeSlot(this)"' : '') + '>' +
                                     '<strong>' + s.startTime + ' - ' + s.endTime + '</strong></div>';
                             });
                         }
-                                                                document.getElementById('timeSlots').innerHTML = html;
+                        document.getElementById('timeSlots').innerHTML = html;
                     });
             }
         }
@@ -504,21 +513,62 @@
             document.getElementById('selectedSlotId').value = selectedSlot.slotId;
             document.querySelectorAll('.time-slot').forEach(s => s.classList.remove('selected'));
             el.classList.add('selected');
-                                                }
+        }
 
-                                                function updateAppointmentSummary() {
-                                                    const doctorSelect = document.getElementById('doctorSelect');
-                                                    const workDate = document.getElementById('workDateInput').value;
+        function updateAppointmentSummary() {
+            const doctorSelect = document.getElementById('doctorSelect');
+            const workDate = document.getElementById('workDateInput').value;
             document.getElementById('appointmentSummary').innerHTML = 
                 '<p><strong>Bệnh nhân:</strong> ' + (selectedPatient ? selectedPatient.name + ' - ' + selectedPatient.phone : 'Chưa chọn') + '</p>' +
                 '<p><strong>Dịch vụ:</strong> ' + (selectedService ? selectedService.name + ' - ' + selectedService.price.toLocaleString() + ' VNĐ' : 'Chưa chọn') + '</p>' +
-                                                        '<p><strong>Bác sĩ:</strong> ' + (selectedDoctor ? doctorSelect.options[doctorSelect.selectedIndex].text : 'Chưa chọn') + '</p>' +
+                '<p><strong>Bác sĩ:</strong> ' + (selectedDoctor ? doctorSelect.options[doctorSelect.selectedIndex].text : 'Chưa chọn') + '</p>' +
                 '<p><strong>Thời gian:</strong> ' + workDate + ' ' + (selectedSlot ? selectedSlot.startTime + ' - ' + selectedSlot.endTime : 'Chưa chọn') + '</p>';
         }
 
-        function viewAppointmentDetail(id) { window.location.href = '${pageContext.request.contextPath}/StaffBookingServlet?action=get_detail&appointmentId=' + id; }
+        function viewAppointmentDetail(id) { 
+            Swal.fire({
+                title: 'Đang tải thông tin...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            fetch('${pageContext.request.contextPath}/StaffBookingServlet?action=get_detail&appointmentId=' + id)
+                .then(r => r.json())
+                .then(data => {
+                    if(data.success) {
+                        const appt = data.appointment;
+                        const statusBadgeClass = appt.status === 'BOOKED' ? 'success' : appt.status === 'CONFIRMED' ? 'success' : appt.status === 'WAITING_PAYMENT' ? 'warning' : appt.status === 'COMPLETED' ? 'primary' : 'danger';
+                        const statusLabel = appt.status === 'BOOKED' ? 'Đã đặt' : appt.status === 'CONFIRMED' ? 'Đã xác nhận' : appt.status === 'WAITING_PAYMENT' ? 'Chờ thanh toán' : appt.status === 'COMPLETED' ? 'Hoàn thành' : 'Đã hủy';
+                        
+                        const html = `
+                            <div class="text-start p-3 bg-light rounded border">
+                                <p class="mb-2"><i class="fas fa-user text-primary me-2"></i><strong>Bệnh nhân:</strong> ` + appt.patientName + ` (` + appt.patientPhone + `)</p>
+                                <p class="mb-2"><i class="fas fa-user-md text-info me-2"></i><strong>Bác sĩ:</strong> ` + appt.doctorName + `</p>
+                                <p class="mb-2"><i class="fas fa-stethoscope text-secondary me-2"></i><strong>Dịch vụ:</strong> ` + appt.serviceName + `</p>
+                                <p class="mb-2"><i class="fas fa-calendar-alt text-warning me-2"></i><strong>Thời gian:</strong> ` + appt.workDate + ` (` + appt.startTime + ` - ` + appt.endTime + `)</p>
+                                <p class="mb-2"><i class="fas fa-info-circle text-dark me-2"></i><strong>Trạng thái:</strong> <span class="badge bg-` + statusBadgeClass + `">` + statusLabel + `</span></p>
+                                <p class="mb-0 mt-3 border-top pt-2"><i class="fas fa-comment-medical text-muted me-2"></i><strong>Lý do khám:</strong><br>` + (appt.reason || '<em class="text-muted">Không có ghi chú</em>') + `</p>
+                            </div>
+                        `;
+                        Swal.fire({
+                            title: 'Chi tiết lịch hẹn',
+                            html: html,
+                            icon: 'info',
+                            confirmButtonText: 'Đóng'
+                        });
+                    } else {
+                        Swal.fire('Lỗi', data.message || 'Không thể lấy thông tin', 'error');
+                    }
+                })
+                .catch(e => {
+                    console.error(e);
+                    Swal.fire('Lỗi', 'Lỗi kết nối tới máy chủ', 'error');
+                });
+        }
         function confirmAppointment(id) { if (confirm('Xác nhận lịch hẹn này?')) { window.location.href = '${pageContext.request.contextPath}/StaffBookingServlet?action=confirm&appointmentId=' + id; } }
+        function completeAppointment(id) { if (confirm('Đánh dấu lịch hẹn này là hoàn thành?')) { window.location.href = '${pageContext.request.contextPath}/StaffBookingServlet?action=complete&appointmentId=' + id; } }
         function cancelAppointment(id) { if (confirm('Hủy lịch hẹn này?')) { window.location.href = '${pageContext.request.contextPath}/StaffBookingServlet?action=cancel&appointmentId=' + id; } }
-                                            </script>
+    </script>                                        </script>
                                         </body>
                                         </html>

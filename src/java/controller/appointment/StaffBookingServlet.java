@@ -44,6 +44,12 @@ public class StaffBookingServlet extends HttpServlet {
                 handleGetTimeSlots(request, response);
             } else if ("get_detail".equals(action)) {
                 handleGetAppointmentDetail(request, response);
+            } else if ("confirm".equals(action)) {
+                handleConfirmAppointment(request, response);
+            } else if ("complete".equals(action)) {
+                handleCompleteAppointment(request, response);
+            } else if ("cancel".equals(action)) {
+                handleCancelAppointment(request, response);
             } else {
                 // Hiển thị trang chính
                 loadInitialData(request, response);
@@ -53,6 +59,54 @@ public class StaffBookingServlet extends HttpServlet {
             request.setAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
             request.getRequestDispatcher("/view/jsp/admin/staff_datlich.jsp").forward(request, response);
         }
+    }
+
+    private void handleConfirmAppointment(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
+            boolean success = AppointmentDAO.updateAppointmentStatus(appointmentId, "BOOKED");
+            if (success) {
+                request.setAttribute("success", "Đã xác nhận thanh toán thành công!");
+            } else {
+                request.setAttribute("error", "Lỗi: Không thể xác nhận lịch hẹn này.");
+            }
+        } catch (Exception e) {
+            request.setAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
+        }
+        loadInitialData(request, response);
+    }
+
+    private void handleCompleteAppointment(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
+            boolean success = AppointmentDAO.updateAppointmentStatus(appointmentId, "COMPLETED");
+            if (success) {
+                request.setAttribute("success", "Đã đánh dấu lịch hẹn hoàn thành!");
+            } else {
+                request.setAttribute("error", "Lỗi: Không thể đánh dấu hoàn thành cho lịch hẹn này.");
+            }
+        } catch (Exception e) {
+            request.setAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
+        }
+        loadInitialData(request, response);
+    }
+
+    private void handleCancelAppointment(HttpServletRequest request, HttpServletResponse response)
+            throws ServletException, IOException {
+        try {
+            int appointmentId = Integer.parseInt(request.getParameter("appointmentId"));
+            boolean success = AppointmentDAO.updateAppointmentStatus(appointmentId, "CANCELLED");
+            if (success) {
+                request.setAttribute("success", "Đã hủy lịch hẹn thành công!");
+            } else {
+                request.setAttribute("error", "Lỗi: Không thể hủy lịch hẹn này.");
+            }
+        } catch (Exception e) {
+            request.setAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
+        }
+        loadInitialData(request, response);
     }
 
     @Override
@@ -88,47 +142,23 @@ public class StaffBookingServlet extends HttpServlet {
             List<Doctors> doctors = new ArrayList<>();
             try {
                 doctors = DoctorDAO.getAllDoctors();
-                System.out.println("DEBUG: Loaded " + doctors.size() + " doctors");
             } catch (Exception e) {
                 System.err.println("ERROR loading doctors: " + e.getMessage());
-                e.printStackTrace();
             }
             request.setAttribute("doctors", doctors);
 
             // Lấy danh sách dịch vụ với improved error handling
             List<Service> services = new ArrayList<>();
             try {
-                System.out.println("DEBUG: Attempting to load services...");
                 ServiceDAO serviceDAO = new ServiceDAO();
                 services = serviceDAO.getAllServices();
-                System.out.println("DEBUG: Successfully loaded " + services.size() + " services");
-
-                // Thử cách khác nếu không có services
                 if (services.isEmpty()) {
-                    System.out.println("DEBUG: Services list is empty, trying alternative method...");
-                    // Thử lấy services theo status
                     services = serviceDAO.getServicesByStatus("active");
-                    System.out.println("DEBUG: Alternative method returned " + services.size() + " services");
-                }
-
-                // Debug: In ra 3 dịch vụ đầu
-                if (!services.isEmpty()) {
-                    System.out.println("DEBUG: First 3 services:");
-                    for (int i = 0; i < Math.min(3, services.size()); i++) {
-                        Service s = services.get(i);
-                        System.out.println(
-                                "  - " + s.getServiceId() + ": " + s.getServiceName() + " (" + s.getStatus() + ")");
-                    }
-                } else {
-                    System.out.println("DEBUG: No services found at all!");
                 }
             } catch (Exception e) {
                 System.err.println("ERROR loading services: " + e.getMessage());
-                e.printStackTrace();
-                services = new ArrayList<>(); // Đảm bảo không null
             }
             request.setAttribute("services", services);
-            System.out.println("DEBUG: Set services attribute with " + services.size() + " items");
 
             // Lấy danh sách chuyên khoa với error handling
             List<String> specialties = new ArrayList<>();
@@ -136,21 +166,35 @@ public class StaffBookingServlet extends HttpServlet {
                 specialties = DoctorDAO.getAllSpecialties();
             } catch (Exception e) {
                 System.err.println("ERROR loading specialties: " + e.getMessage());
-                e.printStackTrace();
             }
             request.setAttribute("specialties", specialties);
 
             // Lấy lịch hẹn hôm nay với error handling
             List<Appointment> todayAppointments = new ArrayList<>();
+            int confirmedCount = 0;
+            int pendingCount = 0;
+            int completedCount = 0;
             try {
                 Date today = new Date(System.currentTimeMillis());
                 AppointmentDAO appointmentDAO = new AppointmentDAO();
                 todayAppointments = appointmentDAO.getAppointmentsByDate(today);
+
+                for (Appointment ap : todayAppointments) {
+                    if ("BOOKED".equals(ap.getStatus())) {
+                        confirmedCount++;
+                    } else if ("WAITING_PAYMENT".equals(ap.getStatus())) {
+                        pendingCount++;
+                    } else if ("COMPLETED".equals(ap.getStatus())) {
+                        completedCount++;
+                    }
+                }
             } catch (Exception e) {
                 System.err.println("Error loading today appointments: " + e.getMessage());
-                e.printStackTrace();
             }
             request.setAttribute("todayAppointments", todayAppointments);
+            request.setAttribute("confirmedCount", confirmedCount);
+            request.setAttribute("pendingCount", pendingCount);
+            request.setAttribute("completedCount", completedCount);
 
             // Forward to JSP
             request.getRequestDispatcher("/view/jsp/admin/staff_datlich.jsp").forward(request, response);
@@ -275,7 +319,8 @@ public class StaffBookingServlet extends HttpServlet {
             System.out.println("✅ Available slot IDs (NEW LOGIC): " + approvedSlotIds);
 
             // Convert doctor schedule slot IDs to actual time slot IDs
-            // slotId 1/2/3 là "ca" (shift) -> map ra slot_id thật theo start_time/end_time trong TimeSlot table
+            // slotId 1/2/3 là "ca" (shift) -> map ra slot_id thật theo start_time/end_time
+            // trong TimeSlot table
             List<Integer> actualTimeSlotIds = new ArrayList<>();
             for (Integer slotId : approvedSlotIds) {
                 switch (slotId) {
