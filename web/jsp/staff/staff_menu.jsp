@@ -38,17 +38,12 @@
                                 class="sidebar-dropdown-item">
                                 Đặt lịch mới
                             </a>
-                            <a href="${pageContext.request.contextPath}/CancelAppointmentServlet"
-                                class="sidebar-dropdown-item">
-                                Xem huỷ lịch hẹn
-                            </a>
+
                             <a href="${pageContext.request.contextPath}/RescheduleAppointmentServlet"
                                 class="sidebar-dropdown-item">
                                 Đổi lịch hẹn
                             </a>
-                            <a href="#" class="sidebar-dropdown-item">
-                                Lịch tái khám
-                            </a>
+
                         </div>
                     </div>
 
@@ -90,11 +85,7 @@
                         </div>
                         <span class="sidebar-text">Tin tức y tế</span>
                     </a>
-                    <a href="#" class="sidebar-item">
-                        <i class="fas fa-bell"></i>
-                        <span>Thông báo</span>
-                        <span class="badge bg-danger rounded-pill ms-auto">3</span>
-                    </a>
+
                 </div>
 
                 <!-- Account Section -->

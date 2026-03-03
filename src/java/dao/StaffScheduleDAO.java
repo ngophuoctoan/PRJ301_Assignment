@@ -1,7 +1,6 @@
 package dao;
 
 import java.sql.*;
-import java.sql.Types;
 import java.util.ArrayList;
 import java.util.List;
 import model.StaffSchedule;
@@ -13,7 +12,8 @@ import util.DBContext;
  */
 public class StaffScheduleDAO {
 
-    public StaffScheduleDAO() {}
+    public StaffScheduleDAO() {
+    }
 
     /**
      * Lấy tất cả yêu cầu chờ phê duyệt
@@ -197,13 +197,13 @@ public class StaffScheduleDAO {
     /**
      * Thêm yêu cầu lịch mới (cả nghỉ phép và ca làm việc)
      */
-    public static boolean addScheduleRequest(StaffSchedule schedule) {
+    public static boolean addScheduleRequest(StaffSchedule schedule) throws SQLException {
         ResultSet rs = null;
         Connection conn = null;
         PreparedStatement ps = null;
         String sql = """
-                    INSERT INTO StaffSchedule (staff_id, work_date, slot_id, request_type, status, reason, created_at)
-                    VALUES (?, ?, ?, ?, 'pending', ?, GETDATE())
+                    INSERT INTO StaffSchedule (staff_id, work_date, slot_id, status, created_at)
+                    VALUES (?, ?, ?, 'pending', GETDATE())
                 """;
         try {
             conn = DBContext.getConnection();
@@ -213,18 +213,14 @@ public class StaffScheduleDAO {
             Integer slotId = schedule.getSlotId();
             if (slotId != null && slotId != 0) {
                 ps.setInt(3, slotId);
-                ps.setString(4, "work");
             } else {
                 ps.setNull(3, Types.INTEGER);
-                ps.setString(4, "leave");
             }
-            ps.setString(5, schedule.getReason() != null ? schedule.getReason() : "");
 
             System.out.println("🔍 Executing SQL: " + sql);
             System.out.println("📊 Parameters: staffId=" + schedule.getStaffId() +
                     ", workDate=" + schedule.getWorkDate() +
                     ", slotId=" + slotId +
-                    ", requestType=" + (slotId != null && slotId != 0 ? "work" : "leave") +
                     ", reason=" + schedule.getReason());
 
             int result = ps.executeUpdate();
@@ -233,7 +229,7 @@ public class StaffScheduleDAO {
         } catch (SQLException e) {
             System.out.println("❌ SQL Error in addScheduleRequest: " + e.getMessage());
             e.printStackTrace();
-            return false;
+            throw e;
         }
     }
 

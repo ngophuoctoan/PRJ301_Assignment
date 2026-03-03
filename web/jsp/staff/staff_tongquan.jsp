@@ -191,7 +191,7 @@
                                             <td><%= apt.getServiceName() != null ? apt.getServiceName() : "N/A" %></td>
                                             <td><span class="badge-dashboard <%= statusClass %>"><%= statusText %></span></td>
                                             <td>
-                                                <a href="${pageContext.request.contextPath}/StaffBookingServlet?action=detail&appointmentId=<%= apt.getAppointmentId() %>" 
+                                                <a href="javascript:void(0);" onclick="viewAppointmentDetail('<%= apt.getAppointmentId() %>')"
                                                    class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
                                             </td>
                                         </tr>
@@ -258,5 +258,49 @@
     </div>
     
     <%@ include file="/view/layout/dashboard_scripts.jsp" %>
-                </body>
-                </html>
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+    <script>
+        function viewAppointmentDetail(id) { 
+            Swal.fire({
+                title: 'Đang tải thông tin...',
+                allowOutsideClick: false,
+                didOpen: () => {
+                    Swal.showLoading();
+                }
+            });
+            fetch('${pageContext.request.contextPath}/StaffBookingServlet?action=get_detail&appointmentId=' + id)
+                .then(function(r) { return r.json(); })
+                .then(function(data) {
+                    if(data.success) {
+                        const appt = data.appointment;
+                        const statusBadgeClass = appt.status === 'BOOKED' ? 'success' : appt.status === 'CONFIRMED' ? 'success' : appt.status === 'WAITING_PAYMENT' ? 'warning' : appt.status === 'COMPLETED' ? 'primary' : 'danger';
+                        const statusLabel = appt.status === 'BOOKED' ? 'Đã đặt' : appt.status === 'CONFIRMED' ? 'Đã xác nhận' : appt.status === 'WAITING_PAYMENT' ? 'Chờ thanh toán' : appt.status === 'COMPLETED' ? 'Hoàn thành' : 'Đã hủy';
+                        
+                        const html = `
+                            <div class="text-start p-3 bg-light rounded border">
+                                <p class="mb-2"><i class="fas fa-user text-primary me-2"></i><strong>Bệnh nhân:</strong> ` + (appt.patientName || 'Không có') + ` ` + (appt.patientPhone ? '(' + appt.patientPhone + ')' : '') + `</p>
+                                <p class="mb-2"><i class="fas fa-user-md text-info me-2"></i><strong>Bác sĩ:</strong> ` + (appt.doctorName || 'Không có') + `</p>
+                                <p class="mb-2"><i class="fas fa-stethoscope text-secondary me-2"></i><strong>Dịch vụ:</strong> ` + (appt.serviceName || 'Chưa có dịch vụ') + `</p>
+                                <p class="mb-2"><i class="fas fa-calendar-alt text-warning me-2"></i><strong>Thời gian:</strong> ` + (appt.workDate || 'Chưa có') + ` ` + (appt.startTime ? '(' + appt.startTime + ' - ' + appt.endTime + ')' : '') + `</p>
+                                <p class="mb-2"><i class="fas fa-info-circle text-dark me-2"></i><strong>Trạng thái:</strong> <span class="badge bg-` + statusBadgeClass + `">` + statusLabel + `</span></p>
+                                <p class="mb-0 mt-3 border-top pt-2"><i class="fas fa-comment-medical text-muted me-2"></i><strong>Lý do khám:</strong><br>` + (appt.reason || '<em class="text-muted">Không có ghi chú</em>') + `</p>
+                            </div>
+                        `;
+                        Swal.fire({
+                            title: 'Chi tiết lịch hẹn',
+                            html: html,
+                            icon: 'info',
+                            confirmButtonText: 'Đóng'
+                        });
+                    } else {
+                        Swal.fire('Lỗi', data.message || 'Không thể lấy thông tin', 'error');
+                    }
+                })
+                .catch(function(e) {
+                    console.error(e);
+                    Swal.fire('Lỗi', 'Lỗi kết nối tới máy chủ', 'error');
+                });
+        }
+    </script>
+</body>
+</html>

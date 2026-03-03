@@ -1,6 +1,11 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="model.User" %>
 <%@ page import="model.Staff" %>
+<%@ page import="dao.AppointmentDAO" %>
+<%@ page import="model.Appointment" %>
+<%@ page import="java.util.List" %>
+<%@ page import="java.time.LocalDate" %>
+<%@ page import="java.sql.Date" %>
 
 <%
     User user = (User) session.getAttribute("user");
@@ -13,6 +18,11 @@
     String staffAvatar = user != null && user.getAvatar() != null
             ? request.getContextPath() + user.getAvatar()
             : request.getContextPath() + "/view/assets/img/default-avatar.png";
+
+    // Lấy danh sách lịch hẹn hôm nay
+    LocalDate today = LocalDate.now();
+    List<Appointment> todayAppointments = AppointmentDAO.getAppointmentsByDate(Date.valueOf(today));
+    int todayCount = todayAppointments.size();
 %>
 
 <!DOCTYPE html>
@@ -154,54 +164,43 @@
                                             </tr>
                                         </thead>
                                         <tbody>
+                                            <% if (todayAppointments != null && !todayAppointments.isEmpty()) { 
+                                                for (Appointment apt : todayAppointments) {
+                                                    String statusClass = "badge-primary";
+                                                    String statusText = apt.getStatus();
+                                                    if ("COMPLETED".equals(apt.getStatus())) {
+                                                        statusClass = "badge-success"; statusText = "Hoàn thành";
+                                                    } else if ("CONFIRMED".equals(apt.getStatus())) {
+                                                        statusClass = "badge-success"; statusText = "Đã xác nhận";
+                                                    } else if ("BOOKED".equals(apt.getStatus())) {
+                                                        statusClass = "badge-primary"; statusText = "Đã đặt";
+                                                    } else if ("CANCELLED".equals(apt.getStatus())) {
+                                                        statusClass = "badge-danger"; statusText = "Đã hủy";
+                                                    }
+                                            %>
                                             <tr>
                                                 <td>
                                                     <div class="d-flex align-items-center">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/default-avatar.png"
-                                                             class="rounded-circle me-2"
+                                                        <img src="${pageContext.request.contextPath}/view/assets/img/default-avatar.png" 
+                                                             class="rounded-circle me-2" 
                                                              style="width: 32px; height: 32px; object-fit: cover;">
-                                                        <span>Trần Thị B</span>
+                                                        <span><%= apt.getPatientName() != null ? apt.getPatientName() : "N/A" %></span>
                                                     </div>
                                                 </td>
-                                                <td>09:00</td>
-                                                <td>Khám tổng quát</td>
-                                                <td><span class="badge-dashboard badge-success">Đã xác nhận</span></td>
+                                                <td><%= apt.getStartTime() != null ? apt.getStartTime() : "N/A" %></td>
+                                                <td><%= apt.getServiceName() != null ? apt.getServiceName() : "N/A" %></td>
+                                                <td><span class="badge-dashboard <%= statusClass %>"><%= statusText %></span></td>
                                                 <td>
-                                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
+                                                    <a href="javascript:void(0);" onclick="viewAppointmentDetail('<%= apt.getAppointmentId() %>')"
+                                                       class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></a>
                                                 </td>
                                             </tr>
+                                            <%      } 
+                                               } else { %>
                                             <tr>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/default-avatar.png"
-                                                             class="rounded-circle me-2"
-                                                             style="width: 32px; height: 32px; object-fit: cover;">
-                                                        <span>Lê Văn C</span>
-                                                    </div>
-                                                </td>
-                                                <td>10:30</td>
-                                                <td>Tư vấn răng</td>
-                                                <td><span class="badge-dashboard badge-warning">Chờ thanh toán</span></td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
-                                                </td>
+                                                <td colspan="5" class="text-center py-4 text-muted">Không có lịch hẹn nào trong hôm nay</td>
                                             </tr>
-                                            <tr>
-                                                <td>
-                                                    <div class="d-flex align-items-center">
-                                                        <img src="${pageContext.request.contextPath}/view/assets/img/default-avatar.png"
-                                                             class="rounded-circle me-2"
-                                                             style="width: 32px; height: 32px; object-fit: cover;">
-                                                        <span>Nguyễn Văn D</span>
-                                                    </div>
-                                                </td>
-                                                <td>14:00</td>
-                                                <td>Lấy cao răng</td>
-                                                <td><span class="badge-dashboard badge-primary">Đã đặt</span></td>
-                                                <td>
-                                                    <button class="btn btn-sm btn-outline-primary"><i class="fas fa-eye"></i></button>
-                                                </td>
-                                            </tr>
+                                            <% } %>
                                         </tbody>
                                     </table>
                                 </div>
