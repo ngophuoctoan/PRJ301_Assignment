@@ -12,19 +12,18 @@ import dao.PatientDAO;
 import model.User;
 import model.Patients;
 
-
 public class UserRegisterWhenTheyNotRegisterInformation extends HttpServlet {
-    
+
     @Override
     protected void doPost(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         request.setCharacterEncoding("UTF-8");
-        
+
         // Lấy user_id từ session hoặc hidden field
         HttpSession session = request.getSession();
         Integer userId = null;
-        
+
         // Thử lấy từ hidden field trước
         String userIdStr = request.getParameter("user_id");
         if (userIdStr != null && !userIdStr.isEmpty()) {
@@ -34,12 +33,12 @@ public class UserRegisterWhenTheyNotRegisterInformation extends HttpServlet {
                 System.err.println("❌ Lỗi parse user_id từ form: " + e.getMessage());
             }
         }
-        
+
         // Nếu không có trong form, lấy từ session
         if (userId == null) {
             userId = (Integer) session.getAttribute("user_id_for_patient");
         }
-        
+
         // Nếu vẫn không có, chuyển về login
         if (userId == null) {
             response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
@@ -66,13 +65,13 @@ public class UserRegisterWhenTheyNotRegisterInformation extends HttpServlet {
             // Xóa thông tin tạm khỏi session
             session.removeAttribute("user_id_for_patient");
             session.removeAttribute("email_for_patient");
-            
-            // Chuyển về trang đặt lịch
-            response.sendRedirect("BookingPage");
+
+            // Chuyển về trang đăng nhập để đăng nhập
+            response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp?success=info_completed");
         } else {
             request.setAttribute("error", "Không thể lưu thông tin. Vui lòng thử lại!");
             request.getRequestDispatcher("/view/jsp/auth/information.jsp").forward(request, response);
-        }    
+        }
     }
 
     @Override
@@ -80,7 +79,8 @@ public class UserRegisterWhenTheyNotRegisterInformation extends HttpServlet {
         return "Servlet xử lý đăng ký thông tin bệnh nhân khi chưa có thông tin";
     }
 
-    public static boolean checkAndRedirectIfNeeded(User user, HttpServletRequest request, HttpServletResponse response) throws IOException {
+    public static boolean checkAndRedirectIfNeeded(User user, HttpServletRequest request, HttpServletResponse response)
+            throws IOException {
         try {
             // Kiểm tra thông tin bệnh nhân
             Patients patientInfo = PatientDAO.getPatientByUserId(user.getId());
@@ -88,7 +88,7 @@ public class UserRegisterWhenTheyNotRegisterInformation extends HttpServlet {
                 // Lưu thông tin user_id vào session để điền form
                 request.getSession().setAttribute("user_id_for_patient", user.getId());
                 request.getSession().setAttribute("email_for_patient", user.getEmail());
-                
+
                 // Chuyển hướng đến trang điền thông tin với thông báo
                 request.setAttribute("message", "Vui lòng điền thông tin cá nhân để tiếp tục đặt lịch");
                 response.sendRedirect("auth/information.jsp");

@@ -102,6 +102,8 @@ public class SignUpServlet extends HttpServlet {
         if (id > 0) {
             HttpSession session = request.getSession();
             session.setAttribute("id", id);
+            session.setAttribute("user_id_for_patient", id);
+            session.setAttribute("email_for_patient", email);
             // Đăng ký thành công → vẫn ở lại trang register.jsp nhưng có tham số success
             response.sendRedirect("jsp/auth/register.jsp?success=true");
         } else {

@@ -31,7 +31,7 @@
 
                                 <div class="mb-3">
                                     <label class="form-label">Họ và tên <span class="text-danger">*</span></label>
-                                    <input type="text" name="fullname" class="form-control" required>
+                                    <input type="text" name="full_name" class="form-control" required>
                                 </div>
 
                                 <div class="mb-3">
@@ -46,16 +46,16 @@
 
                                 <div class="mb-3">
                                     <label class="form-label">Ngày sinh <span class="text-danger">*</span></label>
-                                    <input type="date" name="dob" class="form-control" required>
+                                    <input type="date" name="date_of_birth" class="form-control" required>
                                 </div>
 
                                 <div class="mb-3">
                                     <label class="form-label">Giới tính <span class="text-danger">*</span></label>
                                     <select name="gender" class="form-select" required>
                                         <option value="">Chọn giới tính</option>
-                                        <option value="Nam">Nam</option>
-                                        <option value="Nữ">Nữ</option>
-                                        <option value="Khác">Khác</option>
+                                        <option value="male">Nam</option>
+                                        <option value="female">Nữ</option>
+                                        <option value="other">Khác</option>
                                     </select>
                                 </div>
 

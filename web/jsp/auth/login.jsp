@@ -282,6 +282,12 @@
         <div class="login-container">
             <h3 class="text-center">Please login to use the service</h3>
             <form action="<%= request.getContextPath()%>/LoginServlet" method="post">
+                <% if ("info_completed".equals(request.getParameter("success"))) { %>
+                <div class="alert alert-success">
+                    Thông tin đã được lưu thành công! Vui lòng tiến hành đăng nhập.
+                </div>
+                <% } %>
+
                 <div class="mb-3">
                     <label class="form-label">Email</label>
                     <input type="email" name="email" class="form-control" placeholder="Your Email" required>
@@ -292,6 +298,8 @@
                     <input type="password" name="password_hash" class="form-control" placeholder="Your Password"
                            required>
                 </div>
+
+                
                 <% if (request.getParameter("error") != null) {
                         String error = request.getParameter("error");
                         String errorMessage = "";
@@ -310,11 +318,11 @@
                                 break;
                             default:
                                 errorMessage = "Đăng nhập thất bại!";
-                        }%>
+                        } %>
                 <div class="alert alert-danger">
                     <%= errorMessage%>
                 </div>
-                <% }%>
+                <% } %>
                 <button type="submit" class="btn btn-primary w-100">Login</button>
                 <div style="margin-top: 20px">
                                 <a class="google-btn w-100 text-decoration-none"
