@@ -3,7 +3,7 @@ document.addEventListener('DOMContentLoaded', function () {
     var modalEl = document.getElementById('bookingModal');
     if (!modalEl) return;
 
-    var selfPicker, relativePicker;
+    var selfPicker;
 
     modalEl.addEventListener('shown.bs.modal', function () {
         var doctorId = document.getElementById('modal_doctor_id') && document.getElementById('modal_doctor_id').value;
@@ -12,7 +12,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var workDates = window['workDates_' + doctorId] || [];
 
         // Destroy previous flatpickr
-        [selfPicker, relativePicker].forEach(function (fp) { if (fp && fp.destroy) fp.destroy(); });
+        if (selfPicker && selfPicker.destroy) selfPicker.destroy();
 
         var selfInput = document.getElementById('work_date_picker_self_modal');
         var relInput = document.getElementById('work_date_picker_relative_modal');
@@ -29,25 +29,12 @@ document.addEventListener('DOMContentLoaded', function () {
                 onChange: function (_, dateStr) { updateSchedules(dateStr, doctorId, 'self', true); }
             });
         }
-        if (relInput) {
-            relInput.value = '';
-            document.getElementById('timeSlotsContainer_relative_modal').classList.add('d-none');
-            document.getElementById('timeSlots_relative_modal').innerHTML = '';
-            document.getElementById('selectedSlotId_relative_modal').value = '';
-            relativePicker = flatpickr(relInput, {
-                dateFormat: 'Y-m-d',
-                enable: workDates,
-                minDate: 'today',
-                locale: { firstDayOfWeek: 1 },
-                onChange: function (_, dateStr) { updateSchedules(dateStr, doctorId, 'relative', true); }
-            });
-        }
+        // Removed relative picker initialization
 
         // Nếu chưa chọn dịch vụ: fill danh sách dịch vụ trong modal
         var services = window.bookingServicesData || [];
         if (services.length) {
             fillServiceList('modalServicesSelf', 'selectedServiceId_self_modal');
-            fillServiceList('modalServicesRelative', 'selectedServiceId_relative_modal');
         }
     });
 

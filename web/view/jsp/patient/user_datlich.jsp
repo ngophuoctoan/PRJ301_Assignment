@@ -108,8 +108,7 @@
                 <div class="dashboard-card mb-4">
                     <h6 class="mb-2"><i class="fas fa-info-circle me-2 text-primary"></i>Hướng dẫn</h6>
                     <ul class="mb-0 text-muted">
-                        <li><strong>Đặt cho mình</strong>: chọn tab tương ứng trong popup.</li>
-                        <li><strong>Đặt cho người thân</strong>: nhập thêm thông tin người thân.</li>
+                        <li>Chọn bác sĩ và thời gian khám phù hợp để thực hiện đặt lịch.</li>
                         <li>Hệ thống chỉ hiển thị những ngày bác sĩ có lịch làm việc.</li>
                         <c:if test="${empty selectedService}">
                             <li class="mt-2"><a href="${pageContext.request.contextPath}/services"><i class="fas fa-tooth me-1"></i>Chọn dịch vụ trước</a> để được gợi ý bác sĩ đúng chuyên khoa.</li>
@@ -211,10 +210,7 @@
                                 <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Đóng"></button>
                             </div>
                             <div class="modal-body">
-                                <ul class="nav nav-tabs" role="tablist">
-                                    <li class="nav-item"><button class="nav-link active" data-bs-toggle="tab" data-bs-target="#tabSelf" type="button" role="tab"><i class="fas fa-user me-1"></i>Đặt cho mình</button></li>
-                                    <li class="nav-item"><button class="nav-link" data-bs-toggle="tab" data-bs-target="#tabRelative" type="button" role="tab"><i class="fas fa-users me-1"></i>Đặt cho người thân</button></li>
-                                </ul>
+                                <!-- Removed booking for relative tab -->
                                 <div class="tab-content mt-3">
                                     <div class="tab-pane fade show active" id="tabSelf">
                                         <form action="${pageContext.request.contextPath}/BookingPageServlet" method="post" class="booking-form">
@@ -237,30 +233,7 @@
                                             <div class="text-end"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button><button type="submit" class="btn btn-primary">Xác nhận</button></div>
                                         </form>
                                     </div>
-                                    <div class="tab-pane fade" id="tabRelative">
-                                        <form action="${pageContext.request.contextPath}/BookingPageServlet" method="post" class="booking-form">
-                                            <input type="hidden" name="doctorId" id="modal_doctor_id_rel" value="">
-                                            <input type="hidden" name="bookingFor" value="relative">
-                                            <c:if test="${not empty selectedService}"><input type="hidden" name="serviceId" value="${selectedService.serviceId}"></c:if>
-                                            <div class="relative-info-card p-3 mb-3">
-                                                <div class="row g-3">
-                                                    <div class="col-md-6"><label class="form-label">Họ tên người thân</label><input type="text" name="relativeName" class="form-control"></div>
-                                                    <div class="col-md-6"><label class="form-label">Số điện thoại</label><input type="tel" name="relativePhone" class="form-control"></div>
-                                                    <div class="col-md-4"><label class="form-label">Ngày sinh</label><input type="date" name="relativeDob" class="form-control"></div>
-                                                    <div class="col-md-4"><label class="form-label">Giới tính</label><select name="relativeGender" class="form-select"><option value="">Chọn</option><option value="Nam">Nam</option><option value="Nữ">Nữ</option><option value="Khác">Khác</option></select></div>
-                                                    <div class="col-md-4"><label class="form-label">Mối quan hệ</label><select name="relativeRelationship" class="form-select"><option value="">Chọn</option><option value="Cha">Cha</option><option value="Mẹ">Mẹ</option><option value="Con">Con</option><option value="Anh">Anh</option><option value="Chị">Chị</option><option value="Em">Em</option><option value="Vợ">Vợ</option><option value="Chồng">Chồng</option><option value="Khác">Khác</option></select></div>
-                                                </div>
-                                            </div>
-                                            <c:if test="${not empty selectedService}"><div class="alert alert-info mb-3"><i class="fas fa-info-circle me-2"></i><strong>Dịch vụ đã chọn:</strong> ${selectedService.serviceName} (${selectedService.category})</div></c:if>
-                                            <c:if test="${empty selectedService}">
-                                                <div class="mb-3"><label class="form-label">Chọn dịch vụ</label><div class="row" id="modalServicesRelative"></div><input type="hidden" name="serviceId" id="selectedServiceId_relative_modal"></div>
-                                            </c:if>
-                                            <div class="mb-3"><label class="form-label">Ngày khám</label><input type="text" name="workDate" class="form-control" id="work_date_picker_relative_modal" required></div>
-                                            <div class="mb-3 d-none" id="timeSlotsContainer_relative_modal"><label class="form-label">Ca khám</label><div class="time-slots" id="timeSlots_relative_modal"></div><input type="hidden" name="slotId" id="selectedSlotId_relative_modal"></div>
-                                            <div class="mb-3"><label class="form-label">Lý do khám</label><textarea name="reason" class="form-control" rows="3" required></textarea></div>
-                                            <div class="text-end"><button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Đóng</button><button type="submit" class="btn btn-primary">Xác nhận</button></div>
-                                        </form>
-                                    </div>
+                                <!-- Removed tabRelative content -->
                                 </div>
                             </div>
                         </div>
@@ -287,7 +260,6 @@
                 var id = btn.getAttribute('data-doctor-id');
                 var name = btn.getAttribute('data-doctor-name') || '';
                 document.getElementById('modal_doctor_id').value = id;
-                document.getElementById('modal_doctor_id_rel').value = id;
                 document.getElementById('bookingModalTitle').textContent = 'Đặt lịch với ' + name;
                 var m = document.getElementById('bookingModal');
                 var mod = bootstrap.Modal.getOrCreateInstance(m);
