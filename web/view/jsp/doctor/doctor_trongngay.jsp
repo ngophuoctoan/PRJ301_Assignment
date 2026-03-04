@@ -101,8 +101,9 @@
                         int completed = 0;
                         if (appointments != null) {
                             for (Appointment a : appointments) {
-                                if ("booked".equalsIgnoreCase(a.getStatus())) waiting++;
-                                else if ("completed".equalsIgnoreCase(a.getStatus())) completed++;
+                                String status = a.getStatus() != null ? a.getStatus().trim() : "";
+                                if ("booked".equalsIgnoreCase(status)) waiting++;
+                                else if ("completed".equalsIgnoreCase(status)) completed++;
                             }
                         }
                     %>
@@ -144,7 +145,7 @@
                                     <i class="fas fa-calendar-check"></i>
                                 </div>
                                 <h3 class="h2 fw-bold mb-1"><%= total %></h3>
-                                <p class="text-muted small mb-0 fw-medium">Số ca hôm nay</p>
+                                <p class="text-muted small mb-0 fw-medium">Tổng lịch trong ngày</p>
                             </div>
                         </div>
                         <div class="col-xl-3 col-sm-6">
@@ -181,7 +182,8 @@
                                     boolean hasWaiting = false;
                                     if (appointments != null) {
                                         for (Appointment app : appointments) {
-                                            if ("booked".equalsIgnoreCase(app.getStatus())) {
+                                            String status = app.getStatus() != null ? app.getStatus().trim() : "";
+                                            if ("booked".equalsIgnoreCase(status)) {
                                                 hasWaiting = true;
                                                 String timeStr = app.getStartTime() + " - " + app.getEndTime();
                                 %>
@@ -253,7 +255,8 @@
                                     boolean hasCompleted = false;
                                     if (appointments != null) {
                                         for (Appointment app : appointments) {
-                                            if ("completed".equalsIgnoreCase(app.getStatus())) {
+                                            String status = app.getStatus() != null ? app.getStatus().trim() : "";
+                                            if ("completed".equalsIgnoreCase(status)) {
                                                 hasCompleted = true;
                                                 String timeStr = app.getStartTime() + " - " + app.getEndTime();
                                 %>

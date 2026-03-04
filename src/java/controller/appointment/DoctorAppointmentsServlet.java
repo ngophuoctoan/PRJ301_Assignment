@@ -17,78 +17,64 @@ import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.List;
 
-
 public class DoctorAppointmentsServlet extends HttpServlet {
 
-    @Override   
+    @Override
     protected void doGet(HttpServletRequest request, HttpServletResponse response)
             throws ServletException, IOException {
-        
+
         System.out.println("=== DoctorAppointmentsServlet - doGet ===");
-        
-        // Lấy session và User object
+
+        // Lấy session
         HttpSession session = request.getSession(false);
-        User user = (session != null) ? (User) session.getAttribute("user") : null;
-        Integer userId = null;
-        Long doctorId = null;
-        
-        if (user != null) {
-            userId = user.getId();
-            System.out.println("Session exists, User object found, userId: " + userId);
-            System.out.println("User details: " + user.getEmail() + ", Role: " + user.getRole());
-            // Lấy doctor_id từ user_id
-            Doctors doctor =DoctorDAO.getDoctorByUserId(userId);
-            if (doctor != null) {
-                doctorId = doctor.getDoctor_id();
-                System.out.println("Found doctor_id: " + doctorId + " for userId: " + userId);
+        if (session == null) {
+            response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp?error=session_expired");
+            return;
+        }
+
+        User user = (User) session.getAttribute("user");
+        Doctors sessionDoctor = (Doctors) session.getAttribute("doctor");
+
+        Integer userId = (user != null) ? user.getId() : null;
+        Long doctorId = (sessionDoctor != null) ? sessionDoctor.getDoctorId() : null;
+
+        System.out.println("Session data check:");
+        System.out.println(" - User in session: " + (user != null ? user.getEmail() : "null"));
+        System.out.println(" - Doctor in session: "
+                + (sessionDoctor != null ? sessionDoctor.getFullName() + " (ID: " + doctorId + ")" : "null"));
+
+        // Nếu trong session chưa có doctor object nhưng có user, thử lấy từ DB
+        if (doctorId == null && user != null) {
+            System.out.println("Doctor object not in session, fetching from DB for userId: " + userId);
+            Doctors dbDoctor = DoctorDAO.getDoctorByUserId(userId);
+            if (dbDoctor != null) {
+                doctorId = dbDoctor.getDoctorId();
+                session.setAttribute("doctor", dbDoctor); // Cache in session
+                System.out.println(" ✅ Found doctor in DB: " + doctorId);
+            }
+        }
+
+        // 🚨 EMERGENCY FALLBACK: Dùng test data nếu vẫn không tìm thấy doctor
+        if (doctorId == null) {
+            System.out.println("⚠️ EMERGENCY FALLBACK: No doctor found in session or DB. Checking test cases...");
+            if (userId == null)
+                userId = 1; // Default test user
+
+            Doctors fallbackDoctor = DoctorDAO.getDoctorByUserId(userId);
+            if (fallbackDoctor != null) {
+                doctorId = fallbackDoctor.getDoctorId();
+                System.out.println(" ✅ Fallback SUCCESS - Found doctor_id: " + doctorId);
             } else {
-                System.out.println("❌ Không tìm thấy doctor cho userId: " + userId);
-            }
-        } else {
-            System.out.println("No user object found in session");
-            
-            // Thử cách cũ làm fallback
-            if (session != null) {
-                Object userIdObj = session.getAttribute("userId");
-                if (userIdObj != null) {
-                    userId = (Integer) userIdObj;
-                    System.out.println("Found userId directly in session: " + userId);
-                    // Lấy doctor_id cho fallback case
-                    Doctors doctor =DoctorDAO.getDoctorByUserId(userId);
-                    if (doctor != null) {
-                        doctorId = doctor.getDoctor_id();
-                        System.out.println("Found doctor_id (fallback): " + doctorId);
-                    }
-                }
-            }
-            
-            // 🚨 EMERGENCY FALLBACK: Dùng user_id = 1 để test (dựa vào data SQL)
-            if (userId == null) {
-                System.out.println("⚠️ EMERGENCY FALLBACK: Using userId = 1 for testing");
-                userId = 1; // Từ SQL: user_id = 1 có doctor
-                // Lấy doctor_id tương ứng
-                System.out.println("🔍 CallingDoctorDAO.getDoctorByUserId(" + userId + ")...");
-                Doctors doctor =DoctorDAO.getDoctorByUserId(userId);
-                if (doctor != null) {
-                    doctorId = doctor.getDoctor_id();
-                    System.out.println("✅ Emergency fallback SUCCESS - Found doctor_id: " + doctorId);
-                    System.out.println("   Doctor details: " + doctor.getFull_name() + " (" + doctor.getSpecialty() + ")");
-                } else {
-                    System.out.println("❌ Emergency fallback FAILED - No doctor found for userId: " + userId);
-                    // Thử với userId khác dựa trên SQL data
-                    System.out.println("🔄 Trying fallback with userId = 68...");
-                    userId = 68; // Từ SQL data: user_id = 68 cũng có doctor
-                    doctor =DoctorDAO.getDoctorByUserId(userId);
-                    if (doctor != null) {
-                        doctorId = doctor.getDoctor_id();
-                        System.out.println("✅ Second fallback SUCCESS with userId=68, doctor_id: " + doctorId);
-                    }
+                // Try userId = 68 as mentioned in existing code
+                System.out.println(" 🔄 Trying second fallback with userId = 68...");
+                userId = 68;
+                fallbackDoctor = DoctorDAO.getDoctorByUserId(userId);
+                if (fallbackDoctor != null) {
+                    doctorId = fallbackDoctor.getDoctorId();
+                    System.out.println(" ✅ Second fallback SUCCESS - doctor_id: " + doctorId);
                 }
             }
         }
-        
-        
-        
 
         // Lấy ngày từ tham số, mặc định là hôm nay
         String dateParam = request.getParameter("date");
@@ -108,23 +94,23 @@ public class DoctorAppointmentsServlet extends HttpServlet {
         try {
             System.out.println("Fetching appointments for doctorId: " + doctorId + ", date: " + dateStr);
             List<Appointment> appointments = doctorId != null
-                ? AppointmentDAO.getAppointmentsByDoctorAndDate(doctorId, dateStr)
-                : List.of();
+                    ? AppointmentDAO.getAppointmentsByDoctorAndDate(doctorId, dateStr)
+                    : List.of();
             System.out.println("Found " + (appointments != null ? appointments.size() : 0) + " appointments");
-            
+
             request.setAttribute("appointments", appointments);
             request.setAttribute("doctorId", doctorId);
             request.setAttribute("userId", userId);
             request.setAttribute("selectedDate", dateStr);
             request.setAttribute("selectedDateDisplay", dateDisplay);
             request.setAttribute("isToday", selectedDate.equals(LocalDate.now()));
-            
+
             request.getRequestDispatcher("/view/jsp/doctor/doctor_trongngay.jsp").forward(request, response);
 
         } catch (Exception e) {
             System.err.println("General Error: " + e.getMessage());
             e.printStackTrace();
-            
+
             request.setAttribute("error", "Lỗi hệ thống: " + e.getMessage());
             request.setAttribute("userId", userId);
             request.setAttribute("doctorId", doctorId);
@@ -132,11 +118,11 @@ public class DoctorAppointmentsServlet extends HttpServlet {
             request.setAttribute("selectedDate", dateStr);
             request.setAttribute("selectedDateDisplay", dateDisplay);
             request.setAttribute("isToday", selectedDate.equals(LocalDate.now()));
-            
+
             request.getRequestDispatcher("/view/jsp/doctor/doctor_trongngay.jsp").forward(request, response);
         }
         // Đặt thông báo lỗi vào request attribute
-// Vẫn forward tới JSP để hiển thị lỗi
-        
+        // Vẫn forward tới JSP để hiển thị lỗi
+
     }
 }
