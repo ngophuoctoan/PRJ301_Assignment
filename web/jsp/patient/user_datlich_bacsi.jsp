@@ -258,9 +258,13 @@
                                                     </span>
                                                 </td>
                                                 <td class="text-end">
-                                                    <a href="${pageContext.request.contextPath}/MedicalReportDetailServlet?appointmentId=<%= ap.getAppointmentId() %>" class="btn btn-outline-primary btn-sm btn-action">
-                                                        <i class="fas fa-file-medical-alt me-1"></i> Báo cáo
-                                                    </a>
+                                                    <% if (status.contains("COMPLETED") || status.contains("DONE")) { %>
+                                                        <a href="${pageContext.request.contextPath}/MedicalReportDetailServlet?appointmentId=<%= ap.getAppointmentId() %>" class="btn btn-outline-primary btn-sm btn-action">
+                                                            <i class="fas fa-file-medical-alt me-1"></i> Báo cáo
+                                                        </a>
+                                                    <% } else { %>
+                                                        <span class="text-muted small italic">Chưa có báo cáo</span>
+                                                    <% } %>
                                                 </td>
                                             </tr>
                                         <% } %>
@@ -378,9 +382,13 @@
                                                 <td><%= ap.getFormattedTimeRange() %></td>
                                                 <td><span class="badge rounded-pill status-badge <%= statusBadgeClass %>"><%= statusLabel %></span></td>
                                                 <td class="text-end">
-                                                    <a href="${pageContext.request.contextPath}/MedicalReportDetailServlet?appointmentId=<%= ap.getAppointmentId() %>" class="btn btn-outline-primary btn-sm btn-action">
-                                                        <i class="fas fa-file-medical-alt"></i> Báo cáo
-                                                    </a>
+                                                    <% if (status.contains("COMPLETED") || status.contains("DONE")) { %>
+                                                        <a href="${pageContext.request.contextPath}/MedicalReportDetailServlet?appointmentId=<%= ap.getAppointmentId() %>" class="btn btn-outline-primary btn-sm btn-action">
+                                                            <i class="fas fa-file-medical-alt"></i> Báo cáo
+                                                        </a>
+                                                    <% } else { %>
+                                                        <span class="text-muted small italic">Chưa có báo cáo</span>
+                                                    <% } %>
                                                 </td>
                                             </tr>
                                         <% } %>
