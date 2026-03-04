@@ -440,7 +440,7 @@
                     <a href="${pageContext.request.contextPath}/services" class="btn btn-success btn-action">
                         <i class="fas fa-plus me-2"></i>Đặt lịch khác
                     </a>
-                    <a href="${pageContext.request.contextPath}/index.jsp" class="btn btn-outline-secondary btn-action">
+                    <a href="${pageContext.request.contextPath}/UserHompageServlet" class="btn btn-outline-secondary btn-action">
                         <i class="fas fa-home me-2"></i>Về trang chủ
                     </a>
                 </div>
@@ -671,7 +671,7 @@
 
                     if (timeLeft <= 0) {
                         clearInterval(interval);
-                        window.location.href = '${pageContext.request.contextPath}/view/jsp/home.jsp';
+                        window.location.href = '${pageContext.request.contextPath}/UserHompageServlet';
                     }
                 }, 1000);
 
