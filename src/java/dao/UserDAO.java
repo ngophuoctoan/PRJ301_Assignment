@@ -1,5 +1,6 @@
 package dao;
 
+import org.mindrot.jbcrypt.BCrypt;
 import java.security.MessageDigest;
 import java.sql.*;
 import java.util.ArrayList;
@@ -39,19 +40,51 @@ public class UserDAO {
     }
 
     /**
-     * Chuẩn hoá password đầu vào để so sánh/lưu DB.
-     * - Nếu input đã là MD5 32-hex → dùng luôn
-     * - Nếu là plain text → hash MD5
+     * Chuẩn hoá password đầu vào cho MD5 (Legacy)
      */
-    private static String normalizePasswordForDb(String password) {
-        if (password == null) {
-            return null;
+    private static String hashMD5(String password) {
+        if (password == null) return null;
+        try {
+            MessageDigest md = MessageDigest.getInstance("MD5");
+            byte[] messageDigest = md.digest(password.getBytes("UTF-8"));
+            StringBuilder sb = new StringBuilder();
+            for (byte b : messageDigest) {
+                sb.append(String.format("%02x", b));
+            }
+            return sb.toString();
+        } catch (Exception e) {
+            throw new RuntimeException(e);
         }
-        String p = password.trim();
-        if (p.matches("^[a-fA-F0-9]{32}$")) {
-            return p.toLowerCase();
+    }
+
+    /**
+     * Hash password bằng BCrypt (New)
+     */
+    private static String hashBCrypt(String password) {
+        if (password == null) return null;
+        return BCrypt.hashpw(password, BCrypt.gensalt());
+    }
+
+    private static boolean checkPassword(String plainPassword, String hashedPassword) {
+        if (plainPassword == null || hashedPassword == null) return false;
+        
+        // 1. Kiểm tra xem có phải BCrypt không (thường bắt đầu bằng $2a$)
+        if (hashedPassword.startsWith("$2a$")) {
+            try {
+                return BCrypt.checkpw(plainPassword, hashedPassword);
+            } catch (Exception e) {
+                return false;
+            }
         }
-        return hashPassword(p);
+        
+        // 2. Kiểm tra MD5 (Legacy)
+        String md5 = hashMD5(plainPassword);
+        if (md5.equalsIgnoreCase(hashedPassword)) {
+            return true;
+        }
+        
+        // 3. Kiểm tra Plain text (Dành cho dữ liệu cực cũ)
+        return plainPassword.equals(hashedPassword);
     }
     
     /**
@@ -131,25 +164,22 @@ public class UserDAO {
         try {
             conn = DBContext.getConnection();
             if (conn != null) {
-                ps = conn.prepareStatement(LOGIN_QUERY);
+                // Bước 1: Tìm user theo email
+                ps = conn.prepareStatement(GET_BY_EMAIL);
                 ps.setString(1, email);
-                String normalized = normalizePasswordForDb(password);
-                ps.setString(2, normalized);
                 rs = ps.executeQuery();
+                
                 if (rs.next()) {
-                    user = mapResultSetToUser(rs);
-                }
-
-                // Fallback: nếu user cũ đang lưu plain password (từng có code "KHÔNG HASH"),
-                // thì thử login lại bằng plain để không bị "User not found" gây hiểu nhầm.
-                if (user == null && password != null && !password.trim().matches("^[a-fA-F0-9]{32}$")) {
-                    DBContext.close(rs, ps, null);
-                    ps = conn.prepareStatement(LOGIN_QUERY);
-                    ps.setString(1, email);
-                    ps.setString(2, password.trim());
-                    rs = ps.executeQuery();
-                    if (rs.next()) {
+                    String storedHash = rs.getString("password_hash");
+                    if (checkPassword(password, storedHash)) {
                         user = mapResultSetToUser(rs);
+                        
+                        // Bước 2: Nâng cấp lên BCrypt nếu đang dùng MD5 hoặc Plain
+                        if (storedHash == null || !storedHash.startsWith("$2a$")) {
+                            System.out.println("🔄 Nâng cấp mật khẩu cho [" + email + "] sang BCrypt...");
+                            String newBCryptHash = hashBCrypt(password);
+                            updatePasswordHash(user.getId(), newBCryptHash);
+                        }
                     }
                 }
             }
@@ -170,7 +200,7 @@ public class UserDAO {
             if (conn != null) {
                 ps = conn.prepareStatement(INSERT_USER, Statement.RETURN_GENERATED_KEYS);
             ps.setString(1, email);
-                ps.setString(2, normalizePasswordForDb(password));
+                ps.setString(2, hashBCrypt(password));
                 ps.setString(3, role);
 
                 int rowsAffected = ps.executeUpdate();
@@ -197,7 +227,7 @@ public class UserDAO {
             conn = DBContext.getConnection();
             if (conn != null) {
                 ps = conn.prepareStatement(UPDATE_PASSWORD);
-                ps.setString(1, normalizePasswordForDb(newPassword));
+                ps.setString(1, hashBCrypt(newPassword));
                 ps.setInt(2, userId);
 
                 int rowsUpdated = ps.executeUpdate();
@@ -248,7 +278,7 @@ public class UserDAO {
                 conn.setAutoCommit(false);
                 try {
                     ps = conn.prepareStatement(UPDATE_PASSWORD_BY_EMAIL);
-                    ps.setString(1, normalizePasswordForDb(newPassword));
+                    ps.setString(1, hashBCrypt(newPassword));
                     ps.setString(2, email.trim().toLowerCase());
                     
                     int rowsAffected = ps.executeUpdate();
@@ -376,7 +406,7 @@ public class UserDAO {
             if (conn != null) {
                 ps = conn.prepareStatement(REGISTER_PATIENT, Statement.RETURN_GENERATED_KEYS);
                 ps.setString(1, email);
-                ps.setString(2, normalizePasswordForDb(password));
+                ps.setString(2, hashBCrypt(password));
 
                 int rowsAffected = ps.executeUpdate();
                 if (rowsAffected > 0) {
@@ -706,7 +736,7 @@ public class UserDAO {
                 String sql = "UPDATE Users SET email = ?, password_hash = ? WHERE user_id = ?";
                 ps = conn.prepareStatement(sql);
                 ps.setString(1, email);
-                ps.setString(2, normalizePasswordForDb(password));
+                ps.setString(2, hashBCrypt(password));
                 ps.setInt(3, userId);
             }
             int rows = ps.executeUpdate();
