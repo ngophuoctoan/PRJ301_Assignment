@@ -17,7 +17,7 @@ import org.apache.http.util.EntityUtils;
  */
 
 public class GeminiAiService {
-    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent";
+    private static final String GEMINI_API_URL = "https://generativelanguage.googleapis.com/v1beta/models/gemini-flash-latest:generateContent";
 
     private static String getApiKey() {
         Env.clearCache(); // luôn đọc lại .env để lấy key mới nhất
