@@ -1,7 +1,7 @@
 <%-- Document : datlich-thanhcong Created on : May 27, 2025, 5:14:09 PM Author : Home --%>
     <%@ page contentType="text/html; charset=UTF-8" language="java" %>
-        <%@ include file="../patient/user_header.jsp" %>
-            <%@ include file="../patient/user_menu.jsp" %>
+        <%@ include file="/view/jsp/patient/user_header.jsp" %>
+            <%@ include file="/view/jsp/patient/user_menu.jsp" %>
 
                 <!DOCTYPE html>
                 <html lang="vi">

@@ -1,6 +1,6 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-<%@ include file="/patient/header.jsp" %>
-<%@ include file="/patient/sidebars.jsp" %>
+<%@ include file="/view/jsp/patient/user_header.jsp" %>
+<%@ include file="/view/jsp/patient/user_menu.jsp" %>
 
 <!DOCTYPE html>
 <html lang="vi">

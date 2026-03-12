@@ -216,7 +216,7 @@
 
                             <!-- Back to Profile Link -->
                             <div class="text-center mb-4">
-                                <a href="${pageContext.request.contextPath}/jsp/patient/user_taikhoan.jsp" class="back-link">
+                                <a href="${pageContext.request.contextPath}/view/jsp/patient/user_taikhoan.jsp" class="back-link">
                                     <i class="fas fa-arrow-left me-2"></i>Quay về trang tài khoản
                                 </a>
                             </div>
@@ -257,7 +257,7 @@
                                                             <i class="fas fa-paper-plane me-2"></i>Gửi Mã OTP
                                                         </button>
 
-                                                        <a href="${pageContext.request.contextPath}/jsp/patient/user_taikhoan.jsp" class="btn btn-secondary">
+                                                        <a href="${pageContext.request.contextPath}/view/jsp/patient/user_taikhoan.jsp" class="btn btn-secondary">
                                                             <i class="fas fa-times me-2"></i>Hủy bỏ
                                                         </a>
                                                     </div>

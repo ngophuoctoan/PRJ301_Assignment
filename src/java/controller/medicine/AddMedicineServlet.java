@@ -21,7 +21,7 @@ public class AddMedicineServlet extends HttpServlet {
         request.setCharacterEncoding("UTF-8");
         User user = (User) request.getSession().getAttribute("user");
         if (user == null || !"MANAGER".equals(user.getRole())) {
-            response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
             return;
         }
 
@@ -43,6 +43,6 @@ public class AddMedicineServlet extends HttpServlet {
             request.getSession().setAttribute("errorMessage", "Lỗi: " + e.getMessage());
         }
 
-        response.sendRedirect(request.getContextPath() + "/jsp/manager/manager_khothuoc.jsp");
+        response.sendRedirect(request.getContextPath() + "/view/jsp/manager/manager_khothuoc.jsp");
     }
 }

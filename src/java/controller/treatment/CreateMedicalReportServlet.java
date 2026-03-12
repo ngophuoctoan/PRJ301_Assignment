@@ -3,17 +3,19 @@ package controller.treatment;
 import dao.DoctorDAO;
 import dao.AppointmentDAO;
 import dao.PatientDAO;
+import dao.MedicineDAO;
+import model.Medicine;
 import model.Doctors;
 import model.Patients;
 import model.Appointment;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import java.io.IOException;
 import java.sql.SQLException;
+import java.util.List;
 import java.util.logging.Level;
 import java.util.logging.Logger;
 import util.DBContext;
@@ -42,7 +44,7 @@ public class CreateMedicalReportServlet extends HttpServlet {
             String appointmentIdStr = request.getParameter("appointmentId");
             if (appointmentIdStr == null || appointmentIdStr.trim().isEmpty()) {
                 request.setAttribute("error", "Thiếu ID cuộc hẹn");
-                request.getRequestDispatcher("error_page.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/jsp/doctor/error_page.jsp").forward(request, response);
                 return;
             }
 
@@ -55,7 +57,7 @@ public class CreateMedicalReportServlet extends HttpServlet {
             if (appointment == null) {
                 System.err.println("ERROR - No appointment found with ID: " + appointmentId);
                 request.setAttribute("error", "Không tìm thấy cuộc hẹn với ID: " + appointmentId);
-                request.getRequestDispatcher("error_page.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/jsp/doctor/error_page.jsp").forward(request, response);
                 return;
             }
             
@@ -70,7 +72,7 @@ public class CreateMedicalReportServlet extends HttpServlet {
             if (appointment.getPatientId() <= 0) {
                 System.err.println("ERROR - Invalid patient_id in appointment: " + appointment.getPatientId());
                 request.setAttribute("error", "Appointment không có patient_id hợp lệ");
-                request.getRequestDispatcher("error_page.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/jsp/doctor/error_page.jsp").forward(request, response);
                 return;
             }
             
@@ -101,7 +103,7 @@ public class CreateMedicalReportServlet extends HttpServlet {
                 
                 request.setAttribute("error", "Không tìm thấy bệnh nhân với patient_id: " + appointment.getPatientId() + 
                                            ". Có thể dữ liệu bị không nhất quán trong database.");
-                request.getRequestDispatcher("error_page.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/jsp/doctor/error_page.jsp").forward(request, response);
                 return;
             }
             
@@ -110,21 +112,25 @@ public class CreateMedicalReportServlet extends HttpServlet {
             System.out.println("  - patient_id: " + patient.getPatientId());
             System.out.println("  - full_name: " + patient.getFullName());
             
+            // Lấy danh sách thuốc từ DB để JSP dùng JSTL/EL
+            List<Medicine> medicines = MedicineDAO.getAllMedicine();
+            request.setAttribute("medicines", medicines);
+
             // Set thông tin vào session và request
             session.setAttribute("currentPatient", patient);
             request.setAttribute("appointment", appointment);
             request.setAttribute("patient", patient);
-            
+
             // Forward đến trang phiếu khám (giao diện doctor mới)
-            request.getRequestDispatcher("/jsp/doctor/doctor_phieukham.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/doctor/doctor_phieukham.jsp").forward(request, response);
             
         } catch (NumberFormatException e) {
             request.setAttribute("error", "ID cuộc hẹn không hợp lệ");
-            request.getRequestDispatcher("error_page.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/doctor/error_page.jsp").forward(request, response);
         } catch (SQLException ex) {
             Logger.getLogger(CreateMedicalReportServlet.class.getName()).log(Level.SEVERE, null, ex);
             request.setAttribute("error", "Lỗi database: " + ex.getMessage());
-            request.getRequestDispatcher("error_page.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/doctor/error_page.jsp").forward(request, response);
         }
     }
 

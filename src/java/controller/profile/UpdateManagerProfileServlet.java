@@ -20,13 +20,13 @@ public class UpdateManagerProfileServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
             return;
         }
 
         User user = (User) session.getAttribute("user");
         if (!"MANAGER".equals(user.getRole())) {
-            response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
             return;
         }
 

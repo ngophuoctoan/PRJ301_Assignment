@@ -385,11 +385,11 @@
 
                     <div class="header-right">
                         <div class="auth-buttons">
-                            <!-- Điều hướng về cấu trúc JSP giống project mẫu: /jsp/auth/... -->
-                            <a href="${pageContext.request.contextPath}/jsp/auth/login.jsp"
+                            <!-- Điều hướng về cấu trúc JSP giống project mẫu: /view/jsp/auth/... -->
+                            <a href="${pageContext.request.contextPath}/view/jsp/auth/login.jsp"
                                class="auth-btn login"
                                data-lang="login">Đăng nhập</a>
-                            <a href="${pageContext.request.contextPath}/jsp/auth/register.jsp"
+                            <a href="${pageContext.request.contextPath}/view/jsp/auth/register.jsp"
                                class="auth-btn register"
                                data-lang="register">Đăng ký</a>
                         </div>

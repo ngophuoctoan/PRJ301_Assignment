@@ -216,6 +216,10 @@
                             <span class="status-badge badge-teal ms-2"><i class="fas fa-circle" style="font-size:7px"></i> Hoàn thành</span>
                         </h5>
                         <div class="d-flex gap-2">
+                            <a href="${pageContext.request.contextPath}/ExportMedicalReportServlet?reportId=<%= report.getReportId() %>"
+                               class="btn-edit text-decoration-none" style="background:linear-gradient(135deg,#7c3aed,#6d28d9)">
+                                <i class="fas fa-file-pdf"></i> Xuất PDF
+                            </a>
                             <button class="btn-edit" onclick="showEdit()"><i class="fas fa-pencil-alt"></i> Chỉnh sửa</button>
                             <button class="btn-delete" onclick="showDeleteModal()"><i class="fas fa-trash-alt"></i> Xóa</button>
                         </div>

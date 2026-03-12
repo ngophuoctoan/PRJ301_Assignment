@@ -80,7 +80,7 @@ public class ServiceServlet extends HttpServlet {
         request.setAttribute("categories", categories);
         
         // Forward tới JSP hiển thị dịch vụ
-        request.getRequestDispatcher("jsp/patient/user_services.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/jsp/patient/user_services.jsp").forward(request, response);
     }
 
     /**

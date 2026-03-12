@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="model.Staff" %>
 <%@ page import="model.User" %>
 <%@ page import="java.text.SimpleDateFormat" %>
@@ -6,7 +6,7 @@
 <%
     User user = (User) session.getAttribute("user");
     if (user == null || !"STAFF".equals(user.getRole())) {
-        response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+        response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
         return;
     }
     Staff staff = (Staff) request.getAttribute("staff");
@@ -23,10 +23,10 @@
 </head>
 <body>
     <div class="dashboard-wrapper">
-        <%@ include file="/jsp/staff/staff_menu.jsp" %>
+        <%@ include file="/view/jsp/admin/staff_menu.jsp" %>
         
         <main class="dashboard-main">
-            <%@ include file="/jsp/staff/staff_header.jsp" %>
+            <%@ include file="/view/jsp/admin/staff_header.jsp" %>
             
             <div class="dashboard-content">
                 <!-- Page Header -->

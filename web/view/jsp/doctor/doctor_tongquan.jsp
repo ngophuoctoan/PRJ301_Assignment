@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="java.time.format.DateTimeFormatter"%>
 <%@ page import="model.Doctors" %>
 <%@ page import="model.User" %>
@@ -226,7 +226,7 @@
                     </div>
                                 <div class="text-end">
                                     <span class="badge bg-primary"><%= timeSlot %></span>
-                                    <a href="${pageContext.request.contextPath}/jsp/doctor/doctor_phieukham.jsp?appointmentId=<%= appointment.getAppointmentId() %>" 
+                                    <a href="${pageContext.request.contextPath}/view/jsp/doctor/doctor_phieukham.jsp?appointmentId=<%= appointment.getAppointmentId() %>" 
                                        class="btn btn-sm btn-outline-primary ms-2">
                                         <i class="fas fa-stethoscope"></i> Khám
                                     </a>

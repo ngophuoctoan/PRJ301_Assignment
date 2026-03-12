@@ -1,7 +1,7 @@
-﻿<%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ page contentType="text/html;charset=UTF-8" language="java" %>
     <%@ page import="java.util.*, model.MedicalReport, model.Prescription" %>
-        <%@ include file="user_header.jsp" %>
-            <%@ include file="user_menu.jsp" %>
+        <%@ include file="/view/jsp/patient/user_header.jsp" %>
+            <%@ include file="/view/jsp/patient/user_menu.jsp" %>
                 <% MedicalReport report=(MedicalReport) request.getAttribute("report"); List<Prescription> prescriptions
                     = (List<Prescription>) request.getAttribute("prescriptions");
                         %>
@@ -212,7 +212,7 @@
                                         </div>
                                         <% } %>
 
-                                            <a href="${pageContext.request.contextPath}/jsp/patient/user_datlich_bacsi.jsp"
+                                            <a href="${pageContext.request.contextPath}/view/jsp/patient/user_datlich_bacsi.jsp"
                                                 class="btn btn-secondary">
                                                 <i class="fas fa-arrow-left"></i> Quay lại danh sách lịch hẹn
                                             </a>

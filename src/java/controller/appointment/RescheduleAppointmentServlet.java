@@ -15,7 +15,7 @@ public class RescheduleAppointmentServlet extends HttpServlet {
         // Lấy danh sách lịch hẹn cho staff (có thể lọc theo trạng thái)
         java.util.List<model.Appointment> appointments = new dao.AppointmentDAO().getAllAppointmentsWithDetails();
         request.setAttribute("appointments", appointments);
-        request.getRequestDispatcher("jsp/staff/staff_doilich.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/jsp/admin/staff_doilich.jsp").forward(request, response);
     }
 
     @Override
@@ -45,6 +45,6 @@ public class RescheduleAppointmentServlet extends HttpServlet {
         // Load lại danh sách lịch hẹn
         java.util.List<model.Appointment> appointments = new dao.AppointmentDAO().getAllAppointmentsWithDetails();
         request.setAttribute("appointments", appointments);
-        request.getRequestDispatcher("jsp/staff/staff_doilich.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/jsp/admin/staff_doilich.jsp").forward(request, response);
     }
 }

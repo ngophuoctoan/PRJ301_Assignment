@@ -7,7 +7,7 @@
 <%
     User user = (User) session.getAttribute("user");
     if (user == null || !"STAFF".equals(user.getRole())) {
-        response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+        response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
         return;
     }
 %>
@@ -554,11 +554,11 @@
 
 <body class="bg-light">
     <div class="dashboard-wrapper">
-        <%@ include file="/jsp/staff/staff_menu.jsp" %>
+        <%@ include file="/view/jsp/admin/staff_menu.jsp" %>
 
         <!-- Main Content -->
         <main class="dashboard-main">
-            <%@ include file="/jsp/staff/staff_header.jsp" %>
+            <%@ include file="/view/jsp/admin/staff_header.jsp" %>
 
             <div class="dashboard-content">
                 <div class="container-fluid">

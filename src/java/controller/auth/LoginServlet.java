@@ -162,7 +162,7 @@ public class LoginServlet extends HttpServlet {
                 }
                 response.sendRedirect(request.getContextPath() + "/DoctorHomePageServlet");
             } else if ("PATIENT".equalsIgnoreCase(role)) {
-                request.getRequestDispatcher("jsp/patient/user_homepage.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/jsp/patient/user_homepage.jsp").forward(request, response);
             } else if ("STAFF".equalsIgnoreCase(role)) {
                 try {
                     Staff staff = StaffDAO.getStaffByUserId(user.getId());
@@ -179,7 +179,7 @@ public class LoginServlet extends HttpServlet {
                 }
                 request.getRequestDispatcher("/view/jsp/admin/staff_tongquan.jsp").forward(request, response);
             } else if ("MANAGER".equalsIgnoreCase(role)) {
-                request.getRequestDispatcher("/jsp/manager/manager_tongquan.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/jsp/manager/manager_tongquan.jsp").forward(request, response);
             } else {
                 System.out.println("Invalid role: " + role);
                 response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp?error=invalid_role");
@@ -280,10 +280,7 @@ public class LoginServlet extends HttpServlet {
         String email = request.getParameter("email");
         String password = request.getParameter("password_hash"); // Actually plain text from form
 
-        // System.out.println("=== LOGIN ATTEMPT ===");
-        // System.out.println("Email: " + email);
-        // System.out.println("Password (plain): " + password);
-        // System.out.println("Password (hashed): " + UserDAO.hashPassword(password));
+        
 
         // Use loginUser which handles hashing internally
         User user = UserDAO.loginUser(email, password);
@@ -341,7 +338,7 @@ public class LoginServlet extends HttpServlet {
                 List<BlogPost> latestBlogs = blogDAO.getLatestBlogs(2);
                 request.setAttribute("latestBlogs", latestBlogs);
 
-                request.getRequestDispatcher("jsp/patient/user_homepage.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/jsp/patient/user_homepage.jsp").forward(request, response);
             } else if ("STAFF".equalsIgnoreCase(role)) {
                 try {
                     Staff staff = StaffDAO.getStaffByUserId(user.getId());
@@ -358,7 +355,7 @@ public class LoginServlet extends HttpServlet {
                 }
                 request.getRequestDispatcher("/view/jsp/admin/staff_tongquan.jsp").forward(request, response);
             } else if ("MANAGER".equalsIgnoreCase(role)) {
-                request.getRequestDispatcher("/jsp/manager/manager_tongquan.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/jsp/manager/manager_tongquan.jsp").forward(request, response);
             } else {
                 System.out.println("Invalid role: " + role);
                 response.sendRedirect(

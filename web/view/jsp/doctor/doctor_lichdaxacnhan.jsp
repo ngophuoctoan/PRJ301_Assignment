@@ -1,4 +1,4 @@
-<%-- 
+﻿<%-- 
     Lịch đã được xác nhận - 1 màn hình, không cuộn
 --%>
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
@@ -8,7 +8,7 @@
 <%
     User user = (User) session.getAttribute("user");
     if (user == null || !"DOCTOR".equals(user.getRole())) {
-        response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+        response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
         return;
     }
 %>

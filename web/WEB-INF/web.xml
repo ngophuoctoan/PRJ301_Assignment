@@ -232,6 +232,14 @@
         <url-pattern>/MedicalReportServlet</url-pattern>
     </servlet-mapping>
     <servlet>
+        <servlet-name>ViewReportServlet</servlet-name>
+        <servlet-class>controller.treatment.ViewReportServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ViewReportServlet</servlet-name>
+        <url-pattern>/ViewReportServlet</url-pattern>
+    </servlet-mapping>
+    <servlet>
         <servlet-name>MedicalReportDetailServlet</servlet-name>
         <servlet-class>controller.treatment.MedicalReportDetailServlet</servlet-class>
     </servlet>
@@ -250,7 +258,7 @@
     </servlet-mapping>
     <servlet-mapping>
         <servlet-name>ScheduleApprovalServlet</servlet-name>
-        <url-pattern>/jsp/manager/manager_phancong</url-pattern>
+        <url-pattern>/ManagerPhancong</url-pattern>
     </servlet-mapping>
     <!-- Staff Payment Servlet -->
     <servlet>
@@ -401,5 +409,14 @@
     <servlet-mapping>
         <servlet-name>StaffProfileServlet</servlet-name>
         <url-pattern>/StaffProfileServlet</url-pattern>
+    </servlet-mapping>
+    <!-- ReexaminationServlet: Quản lý tái khám -->
+    <servlet>
+        <servlet-name>ReexaminationServlet</servlet-name>
+        <servlet-class>controller.appointment.ReexaminationServlet</servlet-class>
+    </servlet>
+    <servlet-mapping>
+        <servlet-name>ReexaminationServlet</servlet-name>
+        <url-pattern>/ReexaminationServlet</url-pattern>
     </servlet-mapping>
 </web-app>

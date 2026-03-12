@@ -214,7 +214,7 @@
     <div class="main-container">
         <!-- Phần form quên mật khẩu -->
         <div class="form-section">
-            <a href="${pageContext.request.contextPath}/jsp/auth/login.jsp" class="back-link">
+            <a href="${pageContext.request.contextPath}/view/jsp/auth/login.jsp" class="back-link">
                 <i class="fas fa-arrow-left me-2"></i>Quay lại đăng nhập
             </a>
             

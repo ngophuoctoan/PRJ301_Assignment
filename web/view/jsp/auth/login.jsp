@@ -1,4 +1,4 @@
-<%@ page contentType="text/html; charset=UTF-8" language="java" %>
+﻿<%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <!DOCTYPE html>
 <html lang="vi">
 
@@ -324,7 +324,7 @@
                                 </a>
                             </div>
                 <p class="text-center mt-3">
-                    <a href="<%= request.getContextPath()%>/jsp/auth/register.jsp">Sign up</a> |  <a href="${pageContext.request.contextPath}/ResetPasswordServlet?action=forgot-password">Quên mật khẩu?</a>
+                    <a href="<%= request.getContextPath()%>/view/jsp/auth/register.jsp">Sign up</a> |  <a href="${pageContext.request.contextPath}/ResetPasswordServlet?action=forgot-password">Quên mật khẩu?</a>
                 </p>
 
                 <div class="text-center mt-3">

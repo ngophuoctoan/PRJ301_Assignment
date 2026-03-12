@@ -1,7 +1,7 @@
 ﻿<%@ page contentType="text/html; charset=UTF-8" language="java" %>
 <%
     if (session == null) {
-        response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+        response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
         return;
     }
 
@@ -10,7 +10,7 @@
 
     if (id == null && tempEmail == null) {
         // Người dùng không đăng nhập, cũng chưa đăng ký bước 1 => quay về login
-        response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+        response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
         return;
     }
 %>

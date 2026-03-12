@@ -1,11 +1,7 @@
-/*
- * Click nbfs://nbhost/SystemFileSystem/Templates/Licenses/license-default.txt to change this license
- * Click nbfs://nbhost/SystemFileSystem/Templates/JSP_Servlet/Servlet.java to edit this template
- */
 package controller.treatment;
 
+import dao.MedicalReportDAO;
 import model.MedicalReport;
-import dao.MedicineDAO;
 import model.Prescription;
 import com.itextpdf.text.BaseColor;
 import com.itextpdf.text.Chunk;
@@ -32,8 +28,13 @@ import java.text.SimpleDateFormat;
 import java.util.List;
 
 /**
+ * ExportMedicalReportServlet — Xuất hồ sơ bệnh án ra file PDF.
  *
- * @author Home
+ * Đã được refactor:
+ *   - MedicineDAO.getMedicalReportById()      → MedicalReportDAO.getMedicalReportById()
+ *   - MedicineDAO.getPrescriptionsByReportId() → MedicalReportDAO.getPrescriptionsByReportId()
+ *
+ * @author Refactored
  */
 public class ExportMedicalReportServlet extends HttpServlet {
 
@@ -76,16 +77,15 @@ public class ExportMedicalReportServlet extends HttpServlet {
 protected void doGet(HttpServletRequest request, HttpServletResponse response) throws ServletException, IOException {
     try {
         int reportId = Integer.parseInt(request.getParameter("reportId"));
-        MedicineDAO dao = new MedicineDAO();
 
-        MedicalReport report = dao.getMedicalReportById(reportId);
+        MedicalReport report = MedicalReportDAO.getMedicalReportById(reportId);
 
         if (report == null) {
             response.getWriter().println("Không tìm thấy báo cáo y tế!");
             return;
         }
 
-        List<Prescription> prescriptions = dao.getPrescriptionsByReportId(report.getReportId());
+        List<Prescription> prescriptions = MedicalReportDAO.getPrescriptionsByReportId(report.getReportId());
 
         response.setContentType("application/pdf");
         response.setHeader("Content-Disposition", "attachment; filename=report_" + reportId + ".pdf");
@@ -95,7 +95,7 @@ protected void doGet(HttpServletRequest request, HttpServletResponse response) t
         document.open();
 
         // Load font tiếng Việt
-        String fontPath = getServletContext().getRealPath("/fonts/DejaVuSans.ttf");
+        String fontPath = getServletContext().getRealPath("/view/assets/font/DejaVuSans.ttf");
         BaseFont baseFont = BaseFont.createFont(fontPath, BaseFont.IDENTITY_H, BaseFont.EMBEDDED);
         Font titleFont = new Font(baseFont, 20, Font.BOLD, new BaseColor(0, 70, 140));
         Font subTitleFont = new Font(baseFont, 14, Font.BOLD, BaseColor.BLACK);

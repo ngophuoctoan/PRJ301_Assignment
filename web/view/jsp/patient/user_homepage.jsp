@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="model.Appointment" %>
 <%@page import="model.Doctors" %>
 <%@page import="model.Patients" %>
@@ -31,12 +31,12 @@
     <body>
         <div class="dashboard-wrapper">
         <!-- Sidebar Menu -->
-        <%@ include file="/jsp/patient/user_menu.jsp" %>
+        <%@ include file="/view/jsp/patient/user_menu.jsp" %>
         
         <!-- Main Content -->
         <main class="dashboard-main">
             <!-- Header -->
-            <%@ include file="/jsp/patient/user_header.jsp" %>
+            <%@ include file="/view/jsp/patient/user_header.jsp" %>
             
             <!-- Page Content -->
             <div class="dashboard-content">
@@ -226,7 +226,7 @@
                             <% } %>
                             
                             <div class="mt-4">
-                                <a href="${pageContext.request.contextPath}/jsp/patient/user_taikhoan.jsp" class="btn-dashboard btn-dashboard-secondary w-100">
+                                <a href="${pageContext.request.contextPath}/view/jsp/patient/user_taikhoan.jsp" class="btn-dashboard btn-dashboard-secondary w-100">
                                     <i class="fas fa-edit"></i> Chỉnh sửa hồ sơ
                                 </a>
                             </div>

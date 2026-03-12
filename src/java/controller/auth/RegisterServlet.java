@@ -98,7 +98,7 @@ public class RegisterServlet extends HttpServlet {
             response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
         } else {
             // Lỗi lưu info → quay lại trang register.jsp với error
-            response.sendRedirect("jsp/auth/register.jsp?error=save_failed");
+            response.sendRedirect("/view/jsp/auth/register.jsp?error=save_failed");
         }
     }
 

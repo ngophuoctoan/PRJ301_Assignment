@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="java.util.List"%>
 <%@page import="model.Appointment"%>
 <!DOCTYPE html>
@@ -210,7 +210,7 @@
                                         </div>
                                         
                                         <div class="d-flex gap-2">
-                                            <a href="${pageContext.request.contextPath}/jsp/doctor/doctor_phieukham.jsp?appointmentId=<%=app.getAppointmentId()%>" class="btn btn-primary btn-action flex-grow-1 shadow-sm">
+                                            <a href="${pageContext.request.contextPath}/view/jsp/doctor/doctor_phieukham.jsp?appointmentId=<%=app.getAppointmentId()%>" class="btn btn-primary btn-action flex-grow-1 shadow-sm">
                                                 <i class="fas fa-file-signature me-1"></i> Tạo phiếu khám
                                             </a>
                                             <form method="post" action="${pageContext.request.contextPath}/updateAppointmentStatus" class="d-inline">

@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
     <%@page import="java.util.List" %>
         <%@page import="java.util.ArrayList" %>
             <%@page import="java.math.BigDecimal" %>
@@ -14,7 +14,7 @@
                                     List<Medicine> medicines = new ArrayList<>();
 
                                         if (user == null) {
-        response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+        response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
                                         return;
                                         }
 
@@ -69,7 +69,7 @@
                 <div class="dashboard-card">
                     <div class="d-flex justify-content-between align-items-center mb-4">
                         <h5 class="mb-0"><i class="fas fa-cart-shopping me-2"></i>Bán Thuốc Trực Tiếp</h5>
-                        <a href="${pageContext.request.contextPath}/jsp/staff/staff_tongquan.jsp" class="btn btn-outline-secondary btn-sm">
+                        <a href="${pageContext.request.contextPath}/view/jsp/admin/staff_tongquan.jsp" class="btn btn-outline-secondary btn-sm">
                             <i class="fas fa-arrow-left me-1"></i>Quay lại
                         </a>
                     </div>

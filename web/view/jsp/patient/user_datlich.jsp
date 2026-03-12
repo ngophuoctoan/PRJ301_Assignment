@@ -1,4 +1,4 @@
-<%-- Đặt lịch khám bệnh cho bệnh nhân/ người thân --%>
+﻿<%-- Đặt lịch khám bệnh cho bệnh nhân/ người thân --%>
 <%@ page contentType="text/html; charset=UTF-8" %>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
@@ -84,9 +84,9 @@
 </head>
 <body>
     <div class="dashboard-wrapper">
-        <%@ include file="/jsp/patient/user_menu.jsp" %>
+        <%@ include file="/view/jsp/patient/user_menu.jsp" %>
         <main class="dashboard-main">
-            <%@ include file="/jsp/patient/user_header.jsp" %>
+            <%@ include file="/view/jsp/patient/user_header.jsp" %>
 
             <div class="dashboard-content">
                 <div class="d-flex justify-content-between align-items-center mb-3">

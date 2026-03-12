@@ -18,6 +18,10 @@ import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 
+import jakarta.servlet.Filter;
+
+
+
 /**
  * 🏥 DENTAL CLINIC ROLE FILTER
  * Filter tổng quát cho hệ thống phòng khám nha khoa
@@ -64,7 +68,7 @@ public class RoleFilter implements Filter {
     static {
         // 👤 PATIENT - Bệnh nhân
         ROLE_ACCESS_MAP.put("PATIENT", new HashSet<>(Arrays.asList(
-            "/jsp/patient/",
+            "/view/jsp/patient/",
             "/BookingPageServlet",
             "/BookingServlet", 
             "/PatientAppointments",
@@ -82,7 +86,7 @@ public class RoleFilter implements Filter {
         // 👨‍⚕️ DOCTOR - Bác sĩ
         ROLE_ACCESS_MAP.put("DOCTOR", new HashSet<>(Arrays.asList(
             "/doctor/",
-            "/jsp/doctor/",
+            "/view/jsp/doctor/",
             "/DoctorRegisterScheduleServlet",
             "/DoctorAppointmentsServlet",
             "/DoctorWorkDaysServlet",
@@ -96,7 +100,7 @@ public class RoleFilter implements Filter {
         // 👩‍💼 STAFF - Nhân viên
         ROLE_ACCESS_MAP.put("STAFF", new HashSet<>(Arrays.asList(
             "/staff/",
-            "/jsp/staff/",
+            "/view/jsp/admin/",
             "/staff_homepage.jsp",
             "/staff_datlich.jsp",
             "/staff_tuvan.jsp",
@@ -118,7 +122,7 @@ public class RoleFilter implements Filter {
         // 👨‍💼 MANAGER - Quản lý
         ROLE_ACCESS_MAP.put("MANAGER", new HashSet<>(Arrays.asList(
             "/manager/",
-            "/jsp/manager/",
+            "/view/jsp/manager/",
             "/manager_menu.jsp",
             "/manager_tongquan.jsp", 
             "/manager_doctors.jsp",
@@ -241,7 +245,7 @@ public class RoleFilter implements Filter {
      */
     private void redirectToLogin(HttpServletRequest request, HttpServletResponse response) 
             throws IOException {
-        String loginUrl = request.getContextPath() + "/login.jsp";
+        String loginUrl = request.getContextPath() + "/view/jsp/auth/login.jsp";
         response.sendRedirect(loginUrl);
     }
     
@@ -268,15 +272,15 @@ public class RoleFilter implements Filter {
     private String getHomePageByRole(String role) {
         switch (role.toUpperCase()) {
             case "PATIENT":
-                return "/jsp/patient/user_services.jsp";
+                return "/view/jsp/patient/user_homepage.jsp";
             case "DOCTOR": 
-                return "/doctor/doctor_homepage.jsp";
+                return "/DoctorHomePageServlet";
             case "STAFF":
-                return "/staff_homepage.jsp";
+                return "/view/jsp/admin/staff_tongquan.jsp";
             case "MANAGER":
-                return "/manager_tongquan.jsp";
+                return "/view/jsp/manager/manager_tongquan.jsp";
             default:
-                return "/login.jsp";
+                return "/view/jsp/auth/login.jsp";
         }
     }
 

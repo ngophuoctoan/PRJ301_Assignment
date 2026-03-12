@@ -93,12 +93,12 @@ public class ManagerApprovalDoctorSchedulerServlet extends HttpServlet {
                     ", Staff requests: " + pendingStaffRequests.size());
 
             // Forward to JSP
-            request.getRequestDispatcher("jsp/manager/manager_phancong.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/manager/manager_phancong.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Có lỗi xảy ra khi tải dữ liệu: " + e.getMessage());
-            request.getRequestDispatcher("jsp/manager/manager_phancong.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/manager/manager_phancong.jsp").forward(request, response);
         }
     }
 

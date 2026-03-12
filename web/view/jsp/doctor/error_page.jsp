@@ -1,6 +1,6 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
-    <%@ include file="doctor_header.jsp" %>
-        <%@ include file="doctor_menu.jsp" %>
+    <%@ include file="/view/jsp/doctor/doctor_header.jsp" %>
+        <%@ include file="/view/jsp/doctor/doctor_menu.jsp" %>
 
             <!-- Link to common dashboard CSS -->
             <link rel="stylesheet" href="${pageContext.request.contextPath}/view/assets/css/dashboard-common.css">

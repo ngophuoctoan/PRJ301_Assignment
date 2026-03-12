@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib prefix="fmt" uri="http://java.sun.com/jsp/jstl/fmt" %>
 <%@page import="model.User" %>
@@ -6,7 +6,7 @@
 <%
     User user = (User) session.getAttribute("user");
     if (user == null || !"DOCTOR".equals(user.getRole())) {
-        response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+        response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
         return;
     }
 %>
@@ -64,7 +64,7 @@
                         <h4 class="mb-1"><i class="fas fa-calendar-check me-2"></i>Quản lý lịch hẹn</h4>
                         <p class="text-muted mb-0">Theo dõi và quản lý lịch hẹn bệnh nhân</p>
                     </div>
-                    <a href="${pageContext.request.contextPath}/jsp/doctor/doctor_dangkilich.jsp" class="btn btn-warning">
+                    <a href="${pageContext.request.contextPath}/view/jsp/doctor/doctor_dangkilich.jsp" class="btn btn-warning">
                         <i class="fas fa-calendar-times me-1"></i>Đăng ký nghỉ
                     </a>
                 </div>
@@ -217,11 +217,11 @@
     
     <script>
         function viewAppointment(appointmentId) {
-            window.open('${pageContext.request.contextPath}/jsp/doctor/doctor_phieukham.jsp?appointmentId=' + appointmentId, '_blank');
+            window.open('${pageContext.request.contextPath}/view/jsp/doctor/doctor_phieukham.jsp?appointmentId=' + appointmentId, '_blank');
         }
 
         function viewReport(appointmentId) {
-            window.open('${pageContext.request.contextPath}/jsp/doctor/doctor_viewMedicalReport.jsp?appointmentId=' + appointmentId, '_blank');
+            window.open('${pageContext.request.contextPath}/view/jsp/doctor/doctor_viewMedicalReport.jsp?appointmentId=' + appointmentId, '_blank');
         }
 
         function showRescheduleModal(appointmentId) {

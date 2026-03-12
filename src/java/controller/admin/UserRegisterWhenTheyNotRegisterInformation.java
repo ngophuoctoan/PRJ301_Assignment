@@ -45,16 +45,18 @@ public class UserRegisterWhenTheyNotRegisterInformation extends HttpServlet {
             return;
         }
 
-        // Lấy dữ liệu từ form
-        String fullName = request.getParameter("full_name");
-        String phone = request.getParameter("phone");
-        String dateOfBirth = request.getParameter("date_of_birth");
-        String gender = request.getParameter("gender");
+        // Lấy dữ liệu từ form - tên param phải khớp với name= trong information.jsp
+        String fullName = request.getParameter("fullname");       // info.jsp: name="fullname"
+        String phone = request.getParameter("phone");             // info.jsp: name="phone"
+        String address = request.getParameter("address");         // info.jsp: name="address"
+        String dateOfBirth = request.getParameter("dob");         // info.jsp: name="dob"
+        String gender = request.getParameter("gender");           // info.jsp: name="gender"
 
         System.out.println("=== ĐĂNG KÝ THÔNG TIN BỆNH NHÂN ===");
         System.out.println("User ID: " + userId);
         System.out.println("Họ tên: " + fullName);
         System.out.println("SĐT: " + phone);
+        System.out.println("Địa chỉ: " + address);
         System.out.println("Ngày sinh: " + dateOfBirth);
         System.out.println("Giới tính: " + gender);
 
@@ -67,7 +69,7 @@ public class UserRegisterWhenTheyNotRegisterInformation extends HttpServlet {
             session.removeAttribute("email_for_patient");
 
             // Chuyển về trang đăng nhập để đăng nhập
-            response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp?success=info_completed");
+            response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp?success=info_completed");
         } else {
             request.setAttribute("error", "Không thể lưu thông tin. Vui lòng thử lại!");
             request.getRequestDispatcher("/view/jsp/auth/information.jsp").forward(request, response);

@@ -64,7 +64,7 @@ public class ManagerCustomerListServlet extends HttpServlet {
             request.setAttribute("totalPages", totalPages);
 
             // Forward đến JSP
-            request.getRequestDispatcher("/jsp/manager/manager_customers.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/manager/manager_customers.jsp").forward(request, response);
 
         } catch (Exception e) {
             e.printStackTrace();

@@ -69,11 +69,11 @@ public class ManagerApprovalStaffScheduleServlet extends HttpServlet {
             request.setAttribute("pendingStaffRequests", pendingStaffRequests);
             request.setAttribute("pendingDoctorSchedules", pendingDoctorSchedules);
             // Forward đến JSP
-            request.getRequestDispatcher("/jsp/manager/manager_phancong.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/manager/manager_phancong.jsp").forward(request, response);
         } catch (Exception e) {
             e.printStackTrace();
             request.setAttribute("error", "Có lỗi xảy ra: " + e.getMessage());
-            request.getRequestDispatcher("/jsp/manager/manager_phancong.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/manager/manager_phancong.jsp").forward(request, response);
         }
     }
 

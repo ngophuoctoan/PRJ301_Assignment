@@ -242,7 +242,7 @@
                         </button>
                     </div>
                     <div class="col-md-6 mb-2">
-                        <a href="${pageContext.request.contextPath}/jsp/auth/login.jsp" class="btn btn-outline-secondary w-100">
+                        <a href="${pageContext.request.contextPath}/view/jsp/auth/login.jsp" class="btn btn-outline-secondary w-100">
                             <i class="fas fa-arrow-left me-2"></i>Quay lại đăng nhập
                         </a>
                     </div>

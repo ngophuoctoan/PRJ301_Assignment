@@ -1,11 +1,9 @@
 package controller.treatment;
 
 import dao.DoctorDAO;
-import dao.MedicineDAO;
-import dao.PatientDAO;
+import dao.MedicalReportDAO;
 import model.*;
 import jakarta.servlet.ServletException;
-import jakarta.servlet.annotation.WebServlet;
 import jakarta.servlet.http.HttpServlet;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
@@ -14,11 +12,16 @@ import java.util.ArrayList;
 import java.util.List;
 
 /**
- * ViewReportServlet - Xử lý việc xem báo cáo y tế
- * 
- * @author ASUS
+ * ViewReportServlet — Hiển thị hồ sơ bệnh án cho Doctor.
+ *
+ * Đã được refactor:
+ *   - DoctorDAO.getMedicalReportByAppointmentId() → MedicalReportDAO.getMedicalReportByAppointmentId()
+ *   - DoctorDAO.getMedicalReportById()            → MedicalReportDAO.getMedicalReportById()
+ *   - MedicineDAO.getPrescriptionsByReportId()    → MedicalReportDAO.getPrescriptionsByReportId()
+ *   - DoctorDAO.getTimeSlotByAppointmentId()      → giữ nguyên (không liên quan MedicalReport)
+ *
+ * @author Refactored
  */
-@WebServlet("/ViewReportServlet")
 public class ViewReportServlet extends HttpServlet {
 
     @Override
@@ -26,36 +29,34 @@ public class ViewReportServlet extends HttpServlet {
             throws ServletException, IOException {
 
         try {
-            // Lấy tham số từ request
-            String reportIdParam = request.getParameter("reportId");
+            String reportIdParam      = request.getParameter("reportId");
             String appointmentIdParam = request.getParameter("appointmentId");
 
             if (reportIdParam == null && appointmentIdParam == null) {
-                String contextPath = request.getContextPath();
-                response.sendRedirect(contextPath + "/view/jsp/doctor/doctor_trongngay.jsp?error=missing_params");
+                response.sendRedirect(request.getContextPath()
+                        + "/view/jsp/doctor/doctor_trongngay.jsp?error=missing_params");
                 return;
             }
 
             MedicalReport report = null;
             Integer appointmentId = null;
 
-            // Xử lý trường hợp có reportId
+            // ------------------------------------------------------------------
+            // Tìm MedicalReport — ưu tiên reportId, fallback appointmentId
+            // ------------------------------------------------------------------
             if (reportIdParam != null) {
                 int reportId = Integer.parseInt(reportIdParam);
-                report = DoctorDAO.getMedicalReportById(reportId);
+                report = MedicalReportDAO.getMedicalReportById(reportId);
             }
 
-            // Xử lý trường hợp có appointmentId
-            if (appointmentIdParam != null) {
+            if (report == null && appointmentIdParam != null) {
                 appointmentId = Integer.parseInt(appointmentIdParam);
-                report = DoctorDAO.getMedicalReportByAppointmentId(appointmentId);
+                report = MedicalReportDAO.getMedicalReportByAppointmentId(appointmentId);
             }
 
-            // Kiểm tra báo cáo có tồn tại không
             if (report == null) {
-                // Redirect đến trang "không có báo cáo" với appointmentId
-                String contextPath = request.getContextPath();
-                String redirectUrl = contextPath + "/view/jsp/doctor/doctor_no_report_found.jsp";
+                String redirectUrl = request.getContextPath()
+                        + "/view/jsp/doctor/doctor_no_report_found.jsp";
                 if (appointmentId != null) {
                     redirectUrl += "?appointmentId=" + appointmentId;
                 } else if (appointmentIdParam != null) {
@@ -65,14 +66,14 @@ public class ViewReportServlet extends HttpServlet {
                 return;
             }
 
-            // Lấy thông tin bệnh nhân từ patient_id trong report với đúng method name
-            Patients patient = PatientDAO.getPatientById(report.getPatientId());
+            // ------------------------------------------------------------------
+            // Tải thông tin bổ sung: bệnh nhân, bác sĩ, toa thuốc, time slot
+            // ------------------------------------------------------------------
+            Patients patient = dao.PatientDAO.getPatientById(report.getPatientId());
+            Doctors  doctor  = DoctorDAO.getDoctorById((int) report.getDoctorId());
 
-            // Lấy thông tin bác sĩ với đúng method name
-            Doctors doctor = DoctorDAO.getDoctorById((int) report.getDoctorId());
-
-            // Lấy danh sách đơn thuốc (MedicineDAO trả về List<Prescription>, chuyển sang PrescriptionDetail cho JSP)
-            List<Prescription> prescriptionList = MedicineDAO.getPrescriptionsByReportId(report.getReportId());
+            // Toa thuốc → map sang PrescriptionDetail để JSP dùng
+            List<Prescription> prescriptionList = MedicalReportDAO.getPrescriptionsByReportId(report.getReportId());
             List<PrescriptionDetail> prescriptions = new ArrayList<>();
             if (prescriptionList != null) {
                 for (Prescription p : prescriptionList) {
@@ -87,30 +88,29 @@ public class ViewReportServlet extends HttpServlet {
                 }
             }
 
-            // Lấy thông tin time slot với đúng method name
+            // Time slot (DoctorDAO — không liên quan đến MedicalReport)
             String timeSlot = DoctorDAO.getTimeSlotByAppointmentId(report.getAppointmentId());
 
-            // Set attributes cho JSP
-            request.setAttribute("report", report);
-            request.setAttribute("patient", patient);
-            request.setAttribute("doctor", doctor);
+            // ------------------------------------------------------------------
+            // Gắn attributes và forward tới JSP
+            // ------------------------------------------------------------------
+            request.setAttribute("report",        report);
+            request.setAttribute("patient",       patient);
+            request.setAttribute("doctor",        doctor);
             request.setAttribute("prescriptions", prescriptions);
             request.setAttribute("appointmentId", report.getAppointmentId());
-            request.setAttribute("timeSlot", timeSlot);
+            request.setAttribute("timeSlot",      timeSlot);
 
-            // Forward đến JSP
-            String contextPath = request.getContextPath();
-            request.getRequestDispatcher("/view/jsp/doctor/doctor_viewMedicalReport.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/doctor/doctor_viewMedicalReport.jsp")
+                   .forward(request, response);
 
         } catch (NumberFormatException e) {
-            // Lỗi parse số - redirect đến trang lỗi
-            String contextPath = request.getContextPath();
-            response.sendRedirect(contextPath + "/view/jsp/doctor/error_page.jsp?error=invalid_id");
+            response.sendRedirect(request.getContextPath()
+                    + "/view/jsp/doctor/error_page.jsp?error=invalid_id");
         } catch (Exception e) {
             e.printStackTrace();
-            // Lỗi hệ thống - redirect đến trang lỗi (dùng contextPath để không bị 404)
-            String contextPath = request.getContextPath();
-            response.sendRedirect(contextPath + "/view/jsp/doctor/error_page.jsp?error=system_error");
+            response.sendRedirect(request.getContextPath()
+                    + "/view/jsp/doctor/error_page.jsp?error=system_error");
         }
     }
 
@@ -122,6 +122,6 @@ public class ViewReportServlet extends HttpServlet {
 
     @Override
     public String getServletInfo() {
-        return "ViewReportServlet - Xử lý việc xem báo cáo y tế";
+        return "ViewReportServlet — Xem hồ sơ bệnh án (refactored to use MedicalReportDAO)";
     }
 }

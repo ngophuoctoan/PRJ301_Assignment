@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="fmt" %>
 <%@page import="model.User" %>
@@ -88,10 +88,10 @@
 </head>
 <body>
     <div class="dashboard-wrapper">
-        <%@ include file="/jsp/patient/user_menu.jsp" %>
+        <%@ include file="/view/jsp/patient/user_menu.jsp" %>
         
         <main class="dashboard-main">
-            <%@ include file="/jsp/patient/user_header.jsp" %>
+            <%@ include file="/view/jsp/patient/user_header.jsp" %>
             
             <div class="dashboard-content">
                 <!-- Header Banner -->

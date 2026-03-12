@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
     String customerName = (String) request.getAttribute("customer_name");
     String medicineId = (String) request.getAttribute("medicine_id");
@@ -71,7 +71,7 @@
                         <input type="hidden" name="payment_method" value="<%= paymentMethod %>">
                         
                         <div class="d-flex gap-3 mt-4">
-                            <a href="${pageContext.request.contextPath}/jsp/staff/sell_medicine_direct.jsp" class="btn btn-secondary flex-fill">
+                            <a href="${pageContext.request.contextPath}/view/jsp/admin/sell_medicine_direct.jsp" class="btn btn-secondary flex-fill">
                                 <i class="fas fa-arrow-left me-1"></i>Quay lại
                             </a>
                             <button type="submit" class="btn-dashboard btn-dashboard-primary flex-fill">

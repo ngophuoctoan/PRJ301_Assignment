@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%
     String customerName = (String) request.getAttribute("customer_name");
     String medicineName = (String) request.getAttribute("medicine_name");
@@ -48,7 +48,7 @@
                     </div>
                     
                     <div class="mt-4">
-                        <a href="${pageContext.request.contextPath}/jsp/staff/staff_toathuoc.jsp" class="btn-dashboard btn-dashboard-primary">
+                        <a href="${pageContext.request.contextPath}/view/jsp/admin/staff_toathuoc.jsp" class="btn-dashboard btn-dashboard-primary">
                             <i class="fas fa-arrow-left"></i> Quay lại bán hàng
                         </a>
                     </div>

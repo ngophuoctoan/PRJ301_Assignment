@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%@page import="model.User" %>
         <%@page import="model.Patients" %>
             <%-- Patient Header Component - Bootstrap Version Unified UI/UX Dashboard Header ⚠️ IMPORTANT: File này PHẢI
@@ -54,7 +54,7 @@
                                         <span class="header-user-role">Bệnh nhân</span>
                                     </div>
                                     <div class="header-dropdown">
-                                        <a href="${pageContext.request.contextPath}/jsp/patient/user_taikhoan.jsp">
+                                        <a href="${pageContext.request.contextPath}/view/jsp/patient/user_taikhoan.jsp">
                                             <i class="fas fa-user"></i> Tài khoản
                                         </a>
                                         <a href="${pageContext.request.contextPath}/PatientAppointments">
@@ -67,11 +67,11 @@
                                 </div>
                                 <% } else { %>
                                     <div class="d-flex gap-2">
-                                        <a href="${pageContext.request.contextPath}/jsp/auth/login.jsp"
+                                        <a href="${pageContext.request.contextPath}/view/jsp/auth/login.jsp"
                                             class="btn-dashboard btn-dashboard-secondary">
                                             Đăng nhập
                                         </a>
-                                        <a href="${pageContext.request.contextPath}/jsp/auth/register.jsp"
+                                        <a href="${pageContext.request.contextPath}/view/jsp/auth/register.jsp"
                                             class="btn-dashboard btn-dashboard-primary">
                                             Đăng ký
                                         </a>

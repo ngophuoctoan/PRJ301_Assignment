@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="java.math.BigDecimal" %>
 <%@page import="model.Bill" %>
 <%
@@ -77,7 +77,7 @@
                     </p>
                     
                     <div class="text-center">
-                        <a href="${pageContext.request.contextPath}/jsp/staff/staff_toathuoc.jsp" class="btn-dashboard btn-dashboard-secondary">
+                        <a href="${pageContext.request.contextPath}/view/jsp/admin/staff_toathuoc.jsp" class="btn-dashboard btn-dashboard-secondary">
                             <i class="fas fa-arrow-left"></i> Quay lại bán hàng
                         </a>
                     </div>

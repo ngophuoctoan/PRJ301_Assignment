@@ -83,12 +83,12 @@ public class StaffScheduleServlet extends HttpServlet {
             request.setAttribute("usedDays", usedLeaveDays);
             request.setAttribute("maxDays", 6);
             request.setAttribute("remainingDays", 6 - usedLeaveDays);
-            request.getRequestDispatcher("jsp/staff/staff_xinnghi.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/admin/staff_xinnghi.jsp").forward(request, response);
         } else {
             // Nếu là parttime thì chỉ lấy 3 ca chính (slotId 1,2,3)
             List<TimeSlot> timeSlots = timeSlotDAO.getMainTimeSlots();
             request.setAttribute("timeSlots", timeSlots);
-            request.getRequestDispatcher("jsp/staff/staff_dangkilich.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/admin/staff_dangkilich.jsp").forward(request, response);
         }
     }
 

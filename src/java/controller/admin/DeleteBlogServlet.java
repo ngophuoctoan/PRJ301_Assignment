@@ -35,14 +35,14 @@ public class DeleteBlogServlet extends HttpServlet {
                 }
 
                 // Redirect back to the blog management page
-                response.sendRedirect(request.getContextPath() + "/jsp/manager/manager_blogs.jsp");
+                response.sendRedirect(request.getContextPath() + "/view/jsp/manager/manager_blogs.jsp");
 
             } catch (NumberFormatException | SQLException e) {
                 e.printStackTrace();
-                response.sendRedirect(request.getContextPath() + "/jsp/manager/manager_blogs.jsp?error=DeleteFailed");
+                response.sendRedirect(request.getContextPath() + "/view/jsp/manager/manager_blogs.jsp?error=DeleteFailed");
             }
         } else {
-            response.sendRedirect(request.getContextPath() + "/jsp/manager/manager_blogs.jsp?error=InvalidId");
+            response.sendRedirect(request.getContextPath() + "/view/jsp/manager/manager_blogs.jsp?error=InvalidId");
         }
     }
 

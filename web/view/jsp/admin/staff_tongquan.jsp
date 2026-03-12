@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="model.User" %>
 <%@ page import="model.Staff" %>
 <%@ page import="dao.AppointmentDAO" %>
@@ -11,7 +11,7 @@
     User user = (User) session.getAttribute("user");
     Staff staff = (Staff) session.getAttribute("staff");
     if (user == null || !"STAFF".equals(user.getRole())) {
-        response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+        response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
         return;
     }
     String staffName = staff != null ? staff.getFullName() : (user != null ? user.getUsername() : "Nhân viên");
@@ -34,12 +34,12 @@
     <body>
         <div class="dashboard-wrapper">
             <!-- Sidebar Menu -->
-            <%@ include file="/jsp/staff/staff_menu.jsp" %>
+            <%@ include file="/view/jsp/admin/staff_menu.jsp" %>
 
             <!-- Main Content -->
             <main class="dashboard-main">
                 <!-- Header -->
-                <%@ include file="/jsp/staff/staff_header.jsp" %>
+                <%@ include file="/view/jsp/admin/staff_header.jsp" %>
 
                 <!-- Page Content -->
                 <div class="dashboard-content">

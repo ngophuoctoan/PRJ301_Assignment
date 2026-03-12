@@ -64,7 +64,7 @@ public class AddStaffServlet extends HttpServlet {
                     ", staffPosition=" + staffPosition + ", employmentType=" + employmentType);
             request.setAttribute("error", "invalid_input");
             request.setAttribute("errorMessage", "Thiếu hoặc thông tin rỗng!");
-            request.getRequestDispatcher("/jsp/manager/manager_danhsach.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/manager/manager_danhsach.jsp").forward(request, response);
             return;
         }
 
@@ -73,7 +73,7 @@ public class AddStaffServlet extends HttpServlet {
             LOGGER.severe("Invalid email format: " + email);
             request.setAttribute("error", "invalid_input");
             request.setAttribute("errorMessage", "Định dạng email không hợp lệ!");
-            request.getRequestDispatcher("/jsp/manager/manager_danhsach.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/manager/manager_danhsach.jsp").forward(request, response);
             return;
         }
 
@@ -82,7 +82,7 @@ public class AddStaffServlet extends HttpServlet {
             LOGGER.severe("Invalid phone number format: " + phone);
             request.setAttribute("error", "invalid_input");
             request.setAttribute("errorMessage", "Số điện thoại phải có 10 chữ số!");
-            request.getRequestDispatcher("/jsp/manager/manager_danhsach.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/manager/manager_danhsach.jsp").forward(request, response);
             return;
         }
 
@@ -109,18 +109,18 @@ public class AddStaffServlet extends HttpServlet {
             }
             request.setAttribute("success", "true");
             request.setAttribute("successMessage", "Thêm nhân viên thành công!");
-            request.getRequestDispatcher("/jsp/manager/manager_danhsach.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/manager/manager_danhsach.jsp").forward(request, response);
         } catch (SQLException e) {
             LOGGER.log(Level.SEVERE, "SQL Error occurred: ", e);
             request.setAttribute("error", "staff_creation_failed");
             request.setAttribute("errorMessage",
                     "Lỗi khi tạo nhân viên (có thể do Email đã tồn tại): " + e.getMessage());
-            request.getRequestDispatcher("/jsp/manager/manager_danhsach.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/manager/manager_danhsach.jsp").forward(request, response);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Unexpected error occurred: ", e);
             request.setAttribute("error", "unexpected_error");
             request.setAttribute("errorMessage", "Lỗi không mong muốn: " + e.getMessage());
-            request.getRequestDispatcher("/jsp/manager/manager_danhsach.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/manager/manager_danhsach.jsp").forward(request, response);
         }
     }
 

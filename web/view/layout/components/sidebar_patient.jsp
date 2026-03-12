@@ -1,7 +1,7 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%--============================================PATIENT SIDEBAR - REFACTORED
         VERSION============================================File: sidebar_patient.jsp Purpose: Sidebar navigation cho
-        role PATIENT Encoding: UTF-8 (đảm bảo hiển thị đúng tiếng Việt) Include từ: /jsp/patient/user_menu.jsp ✅
+        role PATIENT Encoding: UTF-8 (đảm bảo hiển thị đúng tiếng Việt) Include từ: /view/jsp/patient/user_menu.jsp ✅
         Features: - Hardcode tất cả text tiếng Việt (không dùng parameter) - Font DejaVu Sans được apply - Clean code,
         dễ maintain - Responsive, accessible ⚠️ IMPORTANT: File này PHẢI được save với UTF-8 encoding (không có
         BOM)============================================--%>
@@ -38,12 +38,12 @@
                 <div class="sidebar-section">
                     <div class="sidebar-section-title">Dịch vụ</div>
 
-                    <a href="${pageContext.request.contextPath}/jsp/patient/user_services.jsp" class="sidebar-item" id="sidebar-services">
+                    <a href="${pageContext.request.contextPath}/view/jsp/patient/user_services.jsp" class="sidebar-item" id="sidebar-services">
                         <i class="fas fa-tooth"></i>
                         <span>Dịch vụ Nha khoa</span>
                     </a>
 
-                    <a href="${pageContext.request.contextPath}/jsp/patient/user_datlich_bacsi.jsp" class="sidebar-item"
+                    <a href="${pageContext.request.contextPath}/view/jsp/patient/user_datlich_bacsi.jsp" class="sidebar-item"
                         id="sidebar-appointments">
                         <i class="fas fa-calendar-check"></i>
                         <span>Lịch khám của tôi</span>
@@ -64,12 +64,12 @@
                             <i class="fas fa-chevron-down ms-auto" style="font-size: 10px;"></i>
                         </div>
                         <div class="sidebar-dropdown-menu" id="consultation-menu">
-                            <a href="${pageContext.request.contextPath}/jsp/patient/user_chatAI.jsp"
+                            <a href="${pageContext.request.contextPath}/view/jsp/patient/user_chatAI.jsp"
                                 class="sidebar-dropdown-item" id="sidebar-ai-consultation">
                                 <i class="fas fa-robot me-2"></i>
                                 Tư vấn với AI
                             </a>
-                            <a href="${pageContext.request.contextPath}/jsp/patient/chat.jsp" class="sidebar-dropdown-item"
+                            <a href="${pageContext.request.contextPath}/view/jsp/patient/chat.jsp" class="sidebar-dropdown-item"
                                 id="sidebar-doctor-chat">
                                 <i class="fas fa-user-md me-2"></i>
                                 Nhắn tin với bác sĩ
@@ -84,7 +84,7 @@
                 <div class="sidebar-section">
                     <div class="sidebar-section-title">Tài khoản</div>
 
-                    <a href="${pageContext.request.contextPath}/jsp/patient/user_taikhoan.jsp" class="sidebar-item"
+                    <a href="${pageContext.request.contextPath}/view/jsp/patient/user_taikhoan.jsp" class="sidebar-item"
                         id="sidebar-account">
                         <i class="fas fa-user-circle"></i>
                         <span>Tài khoản của tôi</span>

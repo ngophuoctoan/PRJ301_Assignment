@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@ page import="dao.PatientDAO" %>
 <%@ page import="model.Patients" %>
 <%@ page import="model.User" %>
@@ -8,7 +8,7 @@
 <%
     User user = (User) session.getAttribute("user");
     if (user == null || !"STAFF".equals(user.getRole())) {
-        response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+        response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
         return;
     }
     List<Patients> patients = (List<Patients>) request.getAttribute("patients");
@@ -33,10 +33,10 @@
 </head>
 <body>
     <div class="dashboard-wrapper">
-        <%@ include file="/jsp/staff/staff_menu.jsp" %>
+        <%@ include file="/view/jsp/admin/staff_menu.jsp" %>
         
         <main class="dashboard-main">
-            <%@ include file="/jsp/staff/staff_header.jsp" %>
+            <%@ include file="/view/jsp/admin/staff_header.jsp" %>
             
             <div class="dashboard-content">
                 <!-- Page Header -->
@@ -208,11 +208,11 @@
         }
         
         function viewPatient(patientId) {
-            window.location.href = '${pageContext.request.contextPath}/jsp/staff/staff_view_patient_detail.jsp?id=' + patientId;
+            window.location.href = '${pageContext.request.contextPath}/view/jsp/admin/staff_view_patient_detail.jsp?id=' + patientId;
         }
         
         function editPatient(patientId) {
-            window.location.href = '${pageContext.request.contextPath}/jsp/staff/staff_edit_patient.jsp?id=' + patientId;
+            window.location.href = '${pageContext.request.contextPath}/view/jsp/admin/staff_edit_patient.jsp?id=' + patientId;
         }
         
         function deletePatient(patientId) {

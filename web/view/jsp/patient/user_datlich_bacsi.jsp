@@ -1,4 +1,4 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
 <%@page import="model.Appointment" %>
 <%@page import="java.util.List" %>
 <%@page import="model.Doctors" %>
@@ -123,10 +123,10 @@
 
 <body>
     <div class="dashboard-wrapper">
-        <%@ include file="/jsp/patient/user_menu.jsp" %>
+        <%@ include file="/view/jsp/patient/user_menu.jsp" %>
         
         <main class="dashboard-main">
-            <%@ include file="/jsp/patient/user_header.jsp" %>
+            <%@ include file="/view/jsp/patient/user_header.jsp" %>
             
             <div class="dashboard-content">
                 <div class="container-fluid">

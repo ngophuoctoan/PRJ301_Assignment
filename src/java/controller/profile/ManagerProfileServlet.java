@@ -21,13 +21,13 @@ public class ManagerProfileServlet extends HttpServlet {
             throws ServletException, IOException {
         HttpSession session = request.getSession(false);
         if (session == null || session.getAttribute("user") == null) {
-            response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
             return;
         }
 
         User user = (User) session.getAttribute("user");
         if (!"MANAGER".equals(user.getRole())) {
-            response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
             return;
         }
 
@@ -49,7 +49,7 @@ public class ManagerProfileServlet extends HttpServlet {
 
         request.setAttribute("manager", manager);
         request.setAttribute("user", user);
-        request.getRequestDispatcher("/jsp/manager/manager_trangcanhan.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/jsp/manager/manager_trangcanhan.jsp").forward(request, response);
     }
 
     @Override

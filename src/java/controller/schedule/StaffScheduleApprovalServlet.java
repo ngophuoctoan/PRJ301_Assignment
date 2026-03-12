@@ -60,7 +60,7 @@ public class StaffScheduleApprovalServlet extends HttpServlet {
         List<StaffSchedule> pendingRequests = scheduleDAO.getPendingRequests();
         request.setAttribute("pendingRequests", pendingRequests);
         
-        request.getRequestDispatcher("jsp/manager/manager_phancong.jsp").forward(request, response);
+        request.getRequestDispatcher("/view/jsp/manager/manager_phancong.jsp").forward(request, response);
     }
     
     @Override

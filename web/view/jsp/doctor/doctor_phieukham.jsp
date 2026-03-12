@@ -1,4 +1,5 @@
 <%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8"%>
+<%@ taglib uri="http://java.sun.com/jsp/jstl/core" prefix="c" %>
 <%@page import="dao.PatientDAO"%>
 <%@page import="dao.AppointmentDAO"%>
 <%@page import="java.text.SimpleDateFormat"%>
@@ -169,6 +170,16 @@
                             <label class="form-label">Chữ ký bác sĩ</label>
                             <input type="text" name="sign" class="form-control" placeholder="Nhập tên bác sĩ ký">
                         </div>
+
+                        <div class="mb-3">
+                            <div class="form-check">
+                                <input class="form-check-input" type="checkbox"
+                                       name="reexam_lan_2" id="reexamCheck" value="1">
+                                <label class="form-check-label fw-semibold" for="reexamCheck">
+                                    <i class="fas fa-calendar-check me-1 text-warning"></i>Cần tái khám
+                                </label>
+                            </div>
+                        </div>
                 </div>
 
                     <!-- Medicine Section -->
@@ -177,21 +188,19 @@
                         
                     <div id="medicine-list">
                         <div class="medicine-item">
-                                <select name="medicine_id" class="form-select" style="flex: 2;">
+                            <select name="medicine_id" class="form-select" style="flex: 2;">
                                 <option value="">Chọn thuốc</option>
-                                <option value="1">Paracetamol - Kho: 500 viên</option>
-                                <option value="2">Amoxicillin - Kho: 300 viên</option>
-                                <option value="3">Saline 0.9% - Kho: 200 chai</option>
-                                <option value="4">Loperamide - Kho: 150 viên</option>
-                                <option value="5">Vitamin C - Kho: 400 viên</option>
+                                <c:forEach var="med" items="${medicines}">
+                                    <option value="${med.medicineId}">${med.name} - Kho: ${med.quantityInStock} ${med.unit}</option>
+                                </c:forEach>
                             </select>
-                                <input type="number" name="quantity" class="form-control" placeholder="SL" min="1" style="flex: 1;">
-                                <input type="text" name="usage" class="form-control" placeholder="Cách dùng" style="flex: 2;">
-                                <button type="button" class="btn btn-danger btn-sm" onclick="removeMedicine(this)">
-                                    <i class="fas fa-times"></i>
-                                </button>
-                            </div>
+                            <input type="number" name="quantity" class="form-control" placeholder="SL" min="1" style="flex: 1;">
+                            <input type="text" name="usage" class="form-control" placeholder="Cách dùng" style="flex: 2;">
+                            <button type="button" class="btn btn-danger btn-sm" onclick="removeMedicine(this)">
+                                <i class="fas fa-times"></i>
+                            </button>
                         </div>
+                    </div>
                         
                         <button type="button" class="btn btn-success btn-sm mt-3" onclick="addMedicine()">
                             <i class="fas fa-plus me-1"></i>Thêm thuốc
@@ -219,19 +228,20 @@
     
     <%@ include file="/view/layout/dashboard_scripts.jsp" %>
 
-        <script>
-            function addMedicine() {
-                const medicineList = document.getElementById('medicine-list');
+    <%-- Inject danh sách thuốc từ DB vào JS để addMedicine() dùng --%>
+    <script>
+        var MEDICINE_OPTIONS_HTML = '<option value="">Chọn thuốc<\/option>';
+        <c:forEach var="med" items="${medicines}">
+        MEDICINE_OPTIONS_HTML += '<option value="${med.medicineId}">${med.name} - Kho: ${med.quantityInStock} ${med.unit}<\/option>';
+        </c:forEach>
+
+        function addMedicine() {
+            const medicineList = document.getElementById('medicine-list');
             const newItem = document.createElement('div');
             newItem.className = 'medicine-item';
             newItem.innerHTML = `
                 <select name="medicine_id" class="form-select" style="flex: 2;">
-                    <option value="">Chọn thuốc</option>
-                    <option value="1">Paracetamol - Kho: 500 viên</option>
-                    <option value="2">Amoxicillin - Kho: 300 viên</option>
-                    <option value="3">Saline 0.9% - Kho: 200 chai</option>
-                    <option value="4">Loperamide - Kho: 150 viên</option>
-                    <option value="5">Vitamin C - Kho: 400 viên</option>
+                    ${MEDICINE_OPTIONS_HTML}
                 </select>
                 <input type="number" name="quantity" class="form-control" placeholder="SL" min="1" style="flex: 1;">
                 <input type="text" name="usage" class="form-control" placeholder="Cách dùng" style="flex: 2;">
@@ -240,7 +250,7 @@
                 </button>
             `;
             medicineList.appendChild(newItem);
-            }
+        }
 
             function removeMedicine(button) {
                 const medicineList = document.getElementById('medicine-list');

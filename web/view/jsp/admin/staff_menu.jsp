@@ -1,11 +1,11 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
     <%-- Staff Sidebar Menu - Bootstrap Version Unified UI/UX Dashboard Sidebar --%>
 
         <!-- Dashboard Sidebar -->
         <nav class="dashboard-sidebar" id="sideMenu">
             <!-- Sidebar Header / Logo -->
             <div class="sidebar-header">
-                <a href="${pageContext.request.contextPath}/jsp/staff/staff_tongquan.jsp" class="sidebar-logo"
+                <a href="${pageContext.request.contextPath}/view/jsp/admin/staff_tongquan.jsp" class="sidebar-logo"
                     title="Về trang chủ">
                     <img src="${pageContext.request.contextPath}/view/assets/img/logo.png" alt="Logo Happy Smile">
                     <span class="sidebar-logo-text">HAPPY <em>Smile</em></span>
@@ -18,7 +18,7 @@
                 <div class="sidebar-section">
                     <div class="sidebar-section-title">Tổng quan</div>
 
-                    <a href="${pageContext.request.contextPath}/jsp/staff/staff_tongquan.jsp" class="sidebar-item">
+                    <a href="${pageContext.request.contextPath}/view/jsp/admin/staff_tongquan.jsp" class="sidebar-item">
                         <i class="fas fa-home"></i>
                         <span>Trang chủ</span>
                     </a>

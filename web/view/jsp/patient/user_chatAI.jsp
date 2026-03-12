@@ -1,9 +1,9 @@
-<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
+﻿<%@page contentType="text/html; charset=UTF-8" pageEncoding="UTF-8" %>
 <%@page import="model.User" %>
 <%
     User user = (User) session.getAttribute("user");
     if (user == null || !"PATIENT".equals(user.getRole())) {
-        response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+        response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
         return;
     }
 %>
@@ -232,10 +232,10 @@
 
 <body>
     <div class="dashboard-wrapper">
-        <%@ include file="/jsp/patient/user_menu.jsp" %>
+        <%@ include file="/view/jsp/patient/user_menu.jsp" %>
 
         <main class="dashboard-main">
-            <%@ include file="/jsp/patient/user_header.jsp" %>
+            <%@ include file="/view/jsp/patient/user_header.jsp" %>
 
             <div class="dashboard-content">
                 <div class="d-flex justify-content-between align-items-center mb-4">

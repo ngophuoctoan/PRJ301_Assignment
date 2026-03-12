@@ -26,7 +26,7 @@ public class StaffUpdateServlet extends HttpServlet {
         Staff currentStaff = (Staff) session.getAttribute("staff");
 
         if (currentUser == null || currentStaff == null) {
-            response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
             return;
         }
 

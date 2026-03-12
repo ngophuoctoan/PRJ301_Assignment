@@ -20,7 +20,7 @@ public class DeleteMedicineServlet extends HttpServlet {
             throws ServletException, IOException {
         User user = (User) request.getSession().getAttribute("user");
         if (user == null || !"MANAGER".equals(user.getRole())) {
-            response.sendRedirect(request.getContextPath() + "/jsp/auth/login.jsp");
+            response.sendRedirect(request.getContextPath() + "/view/jsp/auth/login.jsp");
             return;
         }
 
@@ -37,6 +37,6 @@ public class DeleteMedicineServlet extends HttpServlet {
             request.getSession().setAttribute("errorMessage", "Không thể xóa thuốc: " + e.getMessage());
         }
 
-        response.sendRedirect(request.getContextPath() + "/jsp/manager/manager_khothuoc.jsp");
+        response.sendRedirect(request.getContextPath() + "/view/jsp/manager/manager_khothuoc.jsp");
     }
 }

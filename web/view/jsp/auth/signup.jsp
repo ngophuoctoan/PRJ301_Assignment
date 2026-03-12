@@ -161,7 +161,7 @@
                     <% if (request.getParameter("success") !=null) { %>
                         <div class="alert alert-success">
                             Đăng ký thành công!
-                            <form action="${pageContext.request.contextPath}/jsp/auth/information.jsp" method="post" class="mt-2">
+                            <form action="${pageContext.request.contextPath}/view/jsp/auth/information.jsp" method="post" class="mt-2">
                                 <button type="submit" class="btn btn-success w-100">Tiếp tục hoàn tất thông tin</button>
                             </form>
                         </div>
@@ -193,7 +193,7 @@
                                 </a>
                             </div>
 
-                            <p class="text-center mt-3">Đã có tài khoản? <a href="${pageContext.request.contextPath}/jsp/auth/login.jsp">Đăng nhập</a></p>
+                            <p class="text-center mt-3">Đã có tài khoản? <a href="${pageContext.request.contextPath}/view/jsp/auth/login.jsp">Đăng nhập</a></p>
                             <p class="text-center mt-4">
                                 <a href="<%= request.getContextPath()%>/view/jsp/home.jsp" style="color: blue;">Trang Chủ</a>
                             </p>

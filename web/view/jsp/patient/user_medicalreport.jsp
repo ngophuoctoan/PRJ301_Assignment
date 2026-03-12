@@ -154,10 +154,10 @@
 </head>
 <body>
     <div class="dashboard-wrapper">
-        <%@ include file="user_menu.jsp" %>
+        <%@ include file="/view/jsp/patient/user_menu.jsp" %>
         
         <main class="dashboard-main">
-            <%@ include file="user_header.jsp" %>
+            <%@ include file="/view/jsp/patient/user_header.jsp" %>
             
             <div class="dashboard-content">
                 <div class="container-fluid">

@@ -58,7 +58,7 @@ public class ManagerResetStaffPasswordServlet extends HttpServlet {
 
         if (type == null || idStr == null) {
             session.setAttribute("error", "Tham số không hợp lệ.");
-            response.sendRedirect(request.getContextPath() + "/jsp/manager/manager_danhsach.jsp");
+            response.sendRedirect(request.getContextPath() + "/view/jsp/manager/manager_danhsach.jsp");
             return;
         }
 
@@ -93,7 +93,7 @@ public class ManagerResetStaffPasswordServlet extends HttpServlet {
             session.setAttribute("error", "Đã xảy ra lỗi: " + e.getMessage());
         }
 
-        response.sendRedirect(request.getContextPath() + "/jsp/manager/manager_danhsach.jsp");
+        response.sendRedirect(request.getContextPath() + "/view/jsp/manager/manager_danhsach.jsp");
     }
 
     @Override

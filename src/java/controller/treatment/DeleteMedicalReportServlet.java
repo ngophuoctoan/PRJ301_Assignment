@@ -22,7 +22,7 @@ public class DeleteMedicalReportServlet extends HttpServlet {
             
             if (reportIdParam == null || reportIdParam.trim().isEmpty()) {
                 request.setAttribute("error", "ID báo cáo không hợp lệ");
-                request.getRequestDispatcher("error.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/jsp/doctor/error_page.jsp").forward(request, response);
                 return;
             }
             
@@ -39,19 +39,19 @@ public class DeleteMedicalReportServlet extends HttpServlet {
                 // Xóa thất bại - hiển thị lỗi
                 request.setAttribute("error", "Không thể xóa báo cáo. Báo cáo có thể đã được xóa hoặc không tồn tại.");
                 request.setAttribute("errorTitle", "Lỗi Xóa Báo Cáo");
-                request.getRequestDispatcher("error_page.jsp").forward(request, response);
+                request.getRequestDispatcher("/view/jsp/doctor/error_page.jsp").forward(request, response);
             }
             
         } catch (NumberFormatException e) {
             // Lỗi parse số
             request.setAttribute("error", "ID báo cáo không hợp lệ: " + request.getParameter("reportId"));
             request.setAttribute("errorTitle", "Lỗi Dữ Liệu");
-            request.getRequestDispatcher("error_page.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/doctor/error_page.jsp").forward(request, response);
         } catch (Exception e) {
             // Lỗi khác
             request.setAttribute("error", "Lỗi không xác định: " + e.getMessage());
             request.setAttribute("errorTitle", "Lỗi Hệ Thống");
-            request.getRequestDispatcher("error_page.jsp").forward(request, response);
+            request.getRequestDispatcher("/view/jsp/doctor/error_page.jsp").forward(request, response);
         }
     }
 

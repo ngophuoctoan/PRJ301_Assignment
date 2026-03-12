@@ -25,7 +25,7 @@ public class StaffViewPatientServlet extends HttpServlet {
         request.setAttribute("patients", patients);
         request.setAttribute("keyword", keyword);
         request.setAttribute("gender", gender);
-        RequestDispatcher rd = request.getRequestDispatcher("staff_view_patient.jsp");
+        RequestDispatcher rd = request.getRequestDispatcher("/view/jsp/admin/staff_danhsachbenhnhan.jsp");
         rd.forward(request, response);
     }
 }
